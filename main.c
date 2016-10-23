@@ -25,16 +25,20 @@
 #include "usbd_usr.h"
 #include "usbd_desc.h"
 
+#include <FreeRTOS.h>
+#include <task.h>
+
 /** @addtogroup STM32F4-Discovery_Demo
   * @{
   */
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
-
+#if 0
 #define TESTRESULT_ADDRESS         0x080FFFFC
 #define ALLTEST_PASS               0x00000000
 #define ALLTEST_FAIL               0x55555555
+#endif
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
@@ -45,6 +49,7 @@
 #endif /* USB_OTG_HS_INTERNAL_DMA_ENABLED */
 __ALIGN_BEGIN USB_OTG_CORE_HANDLE  USB_OTG_dev __ALIGN_END;
   
+#if 0
 uint16_t PrescalerValue = 0;
 
 __IO uint32_t TimingDelay;
@@ -59,16 +64,59 @@ uint8_t Buffer[6];
 static uint32_t Demo_USBConfig(void);
 static void TIM4_Config(void);
 static void Demo_Exec(void);
+#endif
 
 /* Private functions ---------------------------------------------------------*/
 
+void sendData()
+{
+  uint8_t buf[] = {0, 1, 0, 0};
+  while(1)
+  {
+    USBD_HID_SendReport (&USB_OTG_dev, buf, 4);
+    //vTaskDelay(1000);
+  }
+}
 /**
   * @brief  Main program.
   * @param  None
   * @retval None
   */
-int usb_test_main(void)
+int main(void)
 {
+    USBD_Init(&USB_OTG_dev,
+            USB_OTG_FS_CORE_ID,
+            &USR_desc, 
+            &USBD_HID_cb, 
+            &USR_cb);
+/*
+(gdb) continue
+Continuing.
+^C
+Program received signal SIGINT, Interrupt.
+0x08003b82 in general_C_handler (fault=<optimized out>, fault_data_extra=<optimized out>, lr=<optimized out>) at arm/Core/CM4F/handlers.c:73
+73      BoardExceptionHandler(-1);
+(gdb) bt
+#0  0x08003b82 in general_C_handler (fault=<optimized out>, fault_data_extra=<optimized out>, lr=<optimized out>) at arm/Core/CM4F/handlers.c:73
+#1  0x08000cba in general_handler () at arm/Core/CM4F/startup.s:215
+#2  0x08000cba in general_handler () at arm/Core/CM4F/startup.s:215
+...
+*/
+#ifdef RTOS_DEBUG
+    xTaskCreate(sendData, (const signed char *)NULL, configMINIMAL_STACK_SIZE, (void *)NULL, tskIDLE_PRIORITY, NULL);
+
+    vTaskStartScheduler();
+#else
+    sendData();
+#endif
+    return 1;
+}
+
+
+
+
+
+#if 0
   RCC_ClocksTypeDef RCC_Clocks;
   
   /* Initialize LEDs and User_Button on STM32F4-Discovery --------------------*/
@@ -82,6 +130,7 @@ int usb_test_main(void)
   /* SysTick end of count event each 10ms */
   RCC_GetClocksFreq(&RCC_Clocks);
   SysTick_Config(RCC_Clocks.HCLK_Frequency / 100);
+//#endif
 
   Demo_Exec();
 
@@ -171,10 +220,10 @@ int usb_test_main(void)
   */
 static void Demo_Exec(void)
 {
+#if 0    
   RCC_ClocksTypeDef RCC_Clocks;
   uint8_t togglecounter = 0x00;
   
-#if 0    
   while(1)
   {
     DemoEnterCondition = 0x00;
@@ -233,7 +282,6 @@ static void Demo_Exec(void)
     while (STM_EVAL_PBGetState(BUTTON_USER) == Bit_SET)
     {}
     UserButtonPressed = 0x00;
-#endif
 
     /* TIM4 channels configuration */
     TIM4_Config();
@@ -268,6 +316,7 @@ static void Demo_Exec(void)
     Y_Offset = Buffer[2];
     Z_Offset = Buffer[4];
     
+#endif
     /* USB configuration */
     Demo_USBConfig();
     
@@ -506,6 +555,7 @@ void assert_failed(uint8_t* file, uint32_t line)
   {
   }
 }
+#endif
 #endif
 
 /**

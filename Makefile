@@ -4,8 +4,7 @@ ROOTDIR = $(CURDIR)/uC-sdk
 default: all
 
 TARGET = test-usb.bin
-TARGET_SRCS = ./shim.c \
-  ./main.c \
+TARGET_SRCS = ./main.c \
   ./selftest.c \
   ./stm32f4xx_it.c \
   ./usb_bsp.c \

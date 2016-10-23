@@ -36,15 +36,19 @@
 extern uint8_t Buffer[6];
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+#if 0
 extern __IO uint8_t DemoEnterCondition;
 uint8_t Counter  = 0x00;
 extern int8_t X_Offset;
 extern int8_t Y_Offset;
 extern __IO uint8_t UserButtonPressed;
 __IO uint8_t TempAcceleration = 0;
+#endif
 /* Private function prototypes -----------------------------------------------*/
 extern USB_OTG_CORE_HANDLE           USB_OTG_dev;
+#if 0
 static uint8_t *USBD_HID_GetPos (void);
+#endif
 extern uint32_t USBD_OTG_ISR_Handler (USB_OTG_CORE_HANDLE *pdev);
 
 /******************************************************************************/
@@ -126,6 +130,7 @@ void DebugMon_Handler(void)
   * @param  None
   * @retval None
   */
+#if 0
 void SysTick_Handler(void)
 {
   uint8_t *buf;
@@ -202,7 +207,7 @@ void SysTick_Handler(void)
   }
   
 }
-
+#endif
 /******************************************************************************/
 /*                 STM32Fxxx Peripherals Interrupt Handlers                   */
 /*  Add here the Interrupt Handler for the used peripheral(s) (PPP), for the  */
@@ -224,6 +229,7 @@ void SysTick_Handler(void)
   * @param  None
   * @retval None
   */
+#if 0
 void EXTI0_IRQHandler(void)
 {
   UserButtonPressed = 0x01;
@@ -231,7 +237,7 @@ void EXTI0_IRQHandler(void)
   /* Clear the EXTI line pending bit */
   EXTI_ClearITPendingBit(USER_BUTTON_EXTI_LINE);
 }
-
+#endif
 /**
   * @brief  This function handles EXTI15_10_IRQ Handler.
   * @param  None
@@ -260,7 +266,7 @@ void OTG_FS_IRQHandler(void)
 {
   USBD_OTG_ISR_Handler (&USB_OTG_dev);
 }
-
+#if 0
 /**
 * @brief  USBD_HID_GetPos
 * @param  None
@@ -295,4 +301,5 @@ static uint8_t *USBD_HID_GetPos (void)
   
   return HID_Buffer;
 }
+#endif
 /******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
