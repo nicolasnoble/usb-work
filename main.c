@@ -82,6 +82,10 @@ int usb_test_main(void)
   /* SysTick end of count event each 10ms */
   RCC_GetClocksFreq(&RCC_Clocks);
   SysTick_Config(RCC_Clocks.HCLK_Frequency / 100);
+
+  Demo_Exec();
+
+  #if 0
   
   if (STM_EVAL_PBGetState(BUTTON_USER) == Bit_SET)
   {
@@ -156,6 +160,7 @@ int usb_test_main(void)
   {    
     Demo_Exec();
   }
+  #endif
   return 0;
 }
 
@@ -169,6 +174,7 @@ static void Demo_Exec(void)
   RCC_ClocksTypeDef RCC_Clocks;
   uint8_t togglecounter = 0x00;
   
+#if 0    
   while(1)
   {
     DemoEnterCondition = 0x00;
@@ -181,11 +187,10 @@ static void Demo_Exec(void)
     STM_EVAL_LEDInit(LED3);
     STM_EVAL_LEDInit(LED5);
     STM_EVAL_LEDInit(LED6);
-    
+
     /* SysTick end of count event each 10ms */
     RCC_GetClocksFreq(&RCC_Clocks);
     SysTick_Config(RCC_Clocks.HCLK_Frequency / 100);  
-    
     /* Turn OFF all LEDs */
     STM_EVAL_LEDOff(LED4);
     STM_EVAL_LEDOff(LED3);
@@ -228,7 +233,8 @@ static void Demo_Exec(void)
     while (STM_EVAL_PBGetState(BUTTON_USER) == Bit_SET)
     {}
     UserButtonPressed = 0x00;
-    
+#endif
+
     /* TIM4 channels configuration */
     TIM4_Config();
     
@@ -265,6 +271,7 @@ static void Demo_Exec(void)
     /* USB configuration */
     Demo_USBConfig();
     
+    #if 0
     /* Waiting User Button is pressed */
     while (UserButtonPressed == 0x00)
     {}
@@ -280,6 +287,8 @@ static void Demo_Exec(void)
     DCD_DevDisconnect(&USB_OTG_dev);
     USB_OTG_StopDevice(&USB_OTG_dev);
   }
+    #endif
+    while(1);
 }
 
 /**
