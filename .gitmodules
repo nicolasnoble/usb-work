@@ -1,0 +1,4 @@
+[submodule "uC-sdk"]
+	path = uC-sdk
+	url = ../../grumpycoders/uC-sdk.git
+	branch = usb-work
