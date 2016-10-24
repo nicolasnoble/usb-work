@@ -5,7 +5,6 @@ default: all
 
 TARGET = test-usb.bin
 TARGET_SRCS = ./main.c \
-  ./selftest.c \
   ./stm32f4xx_it.c \
   ./usb_bsp.c \
   ./usbd_desc.c \
@@ -18,9 +17,6 @@ TARGET_SRCS = ./main.c \
   ./Libraries/STM32_USB_OTG_Driver/src/usb_dcd.c \
   ./Libraries/STM32_USB_OTG_Driver/src/usb_dcd_int.c \
   ./Utilities/STM32F4-Discovery/stm32f4_discovery.c \
-  ./Utilities/STM32F4-Discovery/stm32f4_discovery_audio_codec.c \
-  ./Utilities/STM32F4-Discovery/stm32f4_discovery_lis302dl.c \
-
 
 LIBDEPS = \
 $(ROOTDIR)/FreeRTOS/libFreeRTOS.a \
