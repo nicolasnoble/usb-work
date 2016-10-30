@@ -85,7 +85,7 @@ void sendData()
 void nothing(void){}
 void nothing2(uint8_t foo){}
 
-USBD_Usr_cb_TypeDef USR_cb =
+USBD_Usr_cb_TypeDef usrcb =
 {
   nothing,
   nothing2,
@@ -117,12 +117,21 @@ int main(void)
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
   RCC_AHB2PeriphClockCmd(RCC_AHB2Periph_OTG_FS, ENABLE) ; 
 
+  USB_OTG_dev.dev.class_cb = &USBD_HID_cb;
+  USB_OTG_dev.dev.usr_cb = &usrcb;
+  USB_OTG_dev.dev.usr_device = &USR_desc;
 
-    USBD_Init(&USB_OTG_dev,
-            USB_OTG_FS_CORE_ID,
-            &USR_desc, 
-            &USBD_HID_cb, 
-            &USR_cb);
+  DCD_Init(&USB_OTG_dev , USB_OTG_FS_CORE_ID);
+
+  //enable interrupts
+  NVIC_InitTypeDef nvic;
+  NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
+  nvic.NVIC_IRQChannel = OTG_FS_IRQn;
+  nvic.NVIC_IRQChannelPreemptionPriority = 1;
+  nvic.NVIC_IRQChannelSubPriority = 3;
+  nvic.NVIC_IRQChannelCmd = ENABLE;
+  NVIC_Init(&nvic);
+
 /*
 (gdb) continue
 Continuing.
