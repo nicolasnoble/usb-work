@@ -8,7 +8,6 @@ TARGET_SRCS = ./main.c \
   ./stm32f4xx_it.c \
   ./usb_bsp.c \
   ./usbd_desc.c \
-  ./usbd_usr.c \
   ./Libraries/STM32_USB_Device_Library/Class/hid/src/usbd_hid_core.c \
   ./Libraries/STM32_USB_Device_Library/Core/src/usbd_core.c \
   ./Libraries/STM32_USB_Device_Library/Core/src/usbd_ioreq.c \
@@ -17,6 +16,8 @@ TARGET_SRCS = ./main.c \
   ./Libraries/STM32_USB_OTG_Driver/src/usb_dcd.c \
   ./Libraries/STM32_USB_OTG_Driver/src/usb_dcd_int.c \
   ./Utilities/STM32F4-Discovery/stm32f4_discovery.c \
+
+#  ./usbd_usr.c \
 
 LIBDEPS = \
 $(ROOTDIR)/FreeRTOS/libFreeRTOS.a \

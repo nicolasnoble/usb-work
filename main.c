@@ -22,11 +22,13 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "usbd_hid_core.h"
-#include "usbd_usr.h"
+//#include "usbd_usr.h"
 #include "usbd_desc.h"
 
 #include <FreeRTOS.h>
 #include <task.h>
+
+#include <gpio.h>
 
 /** @addtogroup STM32F4-Discovery_Demo
   * @{
@@ -68,6 +70,8 @@ static void Demo_Exec(void);
 
 /* Private functions ---------------------------------------------------------*/
 
+//#define RTOS_DEBUG
+
 void sendData()
 {
   uint8_t buf[] = {0, 1, 0, 0};
@@ -77,6 +81,21 @@ void sendData()
     //vTaskDelay(1000);
   }
 }
+
+void nothing(void){}
+void nothing2(uint8_t foo){}
+
+USBD_Usr_cb_TypeDef USR_cb =
+{
+  nothing,
+  nothing2,
+  nothing,
+  nothing,
+  nothing,
+  nothing,
+  nothing,
+};
+
 /**
   * @brief  Main program.
   * @param  None
@@ -84,6 +103,21 @@ void sendData()
   */
 int main(void)
 {
+  pin_t sof = make_pin(gpio_port_a, 8);
+  pin_t vbus = make_pin(gpio_port_a, 9);
+  pin_t id = make_pin(gpio_port_a, 10);
+  pin_t dm = make_pin(gpio_port_a, 11);
+  pin_t dp = make_pin(gpio_port_a, 12);
+  gpio_config_alternate(sof, pin_dir_write, pull_none, 10);
+  gpio_config_alternate(vbus, pin_dir_write, pull_none, 10);
+  gpio_config_alternate(id, pin_dir_read, pull_up, 10);
+  gpio_config_alternate(dm, pin_dir_write, pull_none, 10);
+  gpio_config_alternate(dp, pin_dir_write, pull_none, 10);
+
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
+  RCC_AHB2PeriphClockCmd(RCC_AHB2Periph_OTG_FS, ENABLE) ; 
+
+
     USBD_Init(&USB_OTG_dev,
             USB_OTG_FS_CORE_ID,
             &USR_desc, 

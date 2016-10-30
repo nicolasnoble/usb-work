@@ -85,12 +85,17 @@
 *         Initilizes BSP configurations
 * @param  None
 * @retval None
+
+  calls:
+  Libraries/STM32_USB_Device_Library/Core/src/usbd_core.c:134:  USB_OTG_BSP_Init(pdev);
+  Libraries/STM32_USB_HOST_Library/Core/src/usbh_core.c:150:  USB_OTG_BSP_Init(pdev);
 */
 
 void USB_OTG_BSP_Init(USB_OTG_CORE_HANDLE *pdev)
 {
-  GPIO_InitTypeDef GPIO_InitStructure;
+  //GPIO_InitTypeDef GPIO_InitStructure;
 
+ #if 0
 #ifndef USE_ULPI_PHY 
 #ifdef USB_OTG_FS_LOW_PWR_MGMT_SUPPORT
   EXTI_InitTypeDef EXTI_InitStructure;
@@ -98,7 +103,6 @@ void USB_OTG_BSP_Init(USB_OTG_CORE_HANDLE *pdev)
 #endif  
 #endif
   
- 
  #ifdef USE_USB_OTG_FS 
 
   RCC_AHB1PeriphClockCmd( RCC_AHB1Periph_GPIOA , ENABLE);  
@@ -206,6 +210,7 @@ void USB_OTG_BSP_Init(USB_OTG_CORE_HANDLE *pdev)
                          RCC_AHB1Periph_OTG_HS_ULPI, ENABLE) ;    
    
   #else
+  #if 0
    #ifdef USE_I2C_PHY    
   RCC_AHB1PeriphClockCmd( RCC_AHB1Periph_GPIOB , ENABLE);  
   /* Configure RESET INTN SCL SDA (Phy/I2C) Pins */
@@ -246,13 +251,15 @@ void USB_OTG_BSP_Init(USB_OTG_CORE_HANDLE *pdev)
   #endif // USE_ULPI_PHY
   
  #endif //USB_OTG_HS
-
+#endif
+#endif
   
+  #if 0
   /* enable the PWR clock */
   RCC_APB1PeriphResetCmd(RCC_APB1Periph_PWR, ENABLE);   
   
   /* Configure the Key button in EXTI mode */
-  STM_EVAL_PBInit(BUTTON_USER, BUTTON_MODE_EXTI);
+//  STM_EVAL_PBInit(BUTTON_USER, BUTTON_MODE_EXTI);
   
 #ifdef USB_OTG_FS_LOW_PWR_MGMT_SUPPORT
   EXTI_ClearITPendingBit(EXTI_Line18);
@@ -293,14 +300,18 @@ void USB_OTG_BSP_Init(USB_OTG_CORE_HANDLE *pdev)
 
   EXTI_ClearITPendingBit(EXTI_Line20);    
 #endif   
-
-  EXTI_ClearITPendingBit(USER_BUTTON_EXTI_LINE);  
+#endif
+  //EXTI_ClearITPendingBit(USER_BUTTON_EXTI_LINE);  
 }
 /**
 * @brief  USB_OTG_BSP_EnableInterrupt
 *         Enabele USB Global interrupt
 * @param  None
 * @retval None
+
+  calls:
+  Libraries/STM32_USB_HOST_Library/Core/src/usbh_core.c:175:  USB_OTG_BSP_EnableInterrupt(pdev);
+  Libraries/STM32_USB_Device_Library/Core/src/usbd_core.c:150:  USB_OTG_BSP_EnableInterrupt(pdev);
 */
 void USB_OTG_BSP_EnableInterrupt(USB_OTG_CORE_HANDLE *pdev)
 {
@@ -337,6 +348,12 @@ void USB_OTG_BSP_EnableInterrupt(USB_OTG_CORE_HANDLE *pdev)
 *         This function provides delay time in micro sec
 * @param  usec : Value of delay required in micro sec
 * @retval None
+
+  calls:
+  Libraries/STM32_USB_OTG_Driver/src/usb_core.c:127:    USB_OTG_BSP_uDelay(3);
+  Libraries/STM32_USB_OTG_Driver/src/usb_core.c:149:  USB_OTG_BSP_uDelay(3);
+  Libraries/STM32_USB_OTG_Driver/src/usb_core.c:517:  USB_OTG_BSP_uDelay(3);
+  Libraries/STM32_USB_OTG_Driver/src/usb_core.c:546:  USB_OTG_BSP_uDelay(3);
 */
 void USB_OTG_BSP_uDelay (const uint32_t usec)
 {
@@ -358,6 +375,19 @@ void USB_OTG_BSP_uDelay (const uint32_t usec)
 *          This function provides delay time in milli sec
 * @param  msec : Value of delay required in milli sec
 * @retval None
+
+  calls:
+  Libraries/STM32_USB_OTG_Driver/src/usb_core.c:408:    USB_OTG_BSP_mDelay(20);
+  Libraries/STM32_USB_OTG_Driver/src/usb_core.c:429:      USB_OTG_BSP_mDelay(200);
+  Libraries/STM32_USB_OTG_Driver/src/usb_core.c:433:      USB_OTG_BSP_mDelay(200);
+  Libraries/STM32_USB_OTG_Driver/src/usb_core.c:577:  USB_OTG_BSP_mDelay(50);
+  Libraries/STM32_USB_OTG_Driver/src/usb_core.c:774:  USB_OTG_BSP_mDelay(200);
+  Libraries/STM32_USB_OTG_Driver/src/usb_core.c:868:  USB_OTG_BSP_mDelay (10);
+  Libraries/STM32_USB_OTG_Driver/src/usb_core.c:871:  USB_OTG_BSP_mDelay (20);
+  Libraries/STM32_USB_OTG_Driver/src/usb_core.c:1998:      USB_OTG_BSP_mDelay(5);
+  Libraries/STM32_USB_OTG_Driver/src/usb_dcd.c:387:  USB_OTG_BSP_mDelay(3);
+  Libraries/STM32_USB_OTG_Driver/src/usb_dcd.c:405:  USB_OTG_BSP_mDelay(3);
+
 */
 void USB_OTG_BSP_mDelay (const uint32_t msec)
 {

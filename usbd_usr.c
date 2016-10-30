@@ -110,7 +110,8 @@ USBD_Usr_cb_TypeDef USR_cb =
 * @retval None
 */
 void USBD_USR_Init(void)
-{   
+{
+#if 0
   /* Setup SysTick Timer for 40 msec interrupts 
   This interrupt is used to probe the joystick */
   if (SysTick_Config(SystemCoreClock / 24))
@@ -118,6 +119,7 @@ void USBD_USR_Init(void)
     /* Capture error */ 
     while (1);
   }
+#endif
 }
 
 /**
