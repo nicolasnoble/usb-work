@@ -6,6 +6,8 @@
 #define USB_DESC_STRING                 0x03
 #define USB_DESC_INTERFACE              0x04
 #define USB_DESC_ENDPOINT               0x05
+#define USB_DESC_DEVICE_QUALIFIER       0x06
+#define USB_DESC_OTHER_SPEED            0x07
 #define USB_DESC_BOS                    0x0f
 #define USB_DESC_DEVICE_CAPABILITY      0x10
 #define USB_DESC_HID                    0x21
@@ -34,3 +36,9 @@
 #define USB_CLASS_WIRELESS              0xe0
 #define USB_CLASS_APPLICATION           0xfe
 #define USB_CLASS_VENDOR_SPEC           0xff
+
+//HID report type
+#define USB_HID_REPORT_INPUT            0x01
+#define USB_HID_REPORT_OUTPUT           0x02
+#define USB_HID_REPORT_FEATURE          0x03
+
