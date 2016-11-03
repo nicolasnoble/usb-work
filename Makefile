@@ -5,6 +5,7 @@ default: all
 
 TARGET = test-usb.bin
 TARGET_SRCS = ./main.c \
+  ./st-example-usb-descriptors.cc \
   ./stm32f4xx_it.c \
   ./usb_bsp.c \
   ./usbd_desc.c \
@@ -40,6 +41,8 @@ TARGET_CFLAGS = \
   -DUSE_STDPERIPH_DRIVER \
   -DSTM32F4XX \
   -DUSE_USB_OTG_FS \
+
+TARGET_CXXFLAGS = -std=c++11
 
 include $(ROOTDIR)/common.mk
 
