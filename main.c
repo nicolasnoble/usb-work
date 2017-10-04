@@ -10,7 +10,7 @@
 __ALIGN_BEGIN USB_OTG_CORE_HANDLE  USB_OTG_dev __ALIGN_END;
 
 
-
+pin_t test;
 
 //#define RTOS_DEBUG
 
@@ -21,6 +21,17 @@ void sendData()
   {
     USBD_HID_SendReport (&USB_OTG_dev, buf, 4);
     //vTaskDelay(100);
+  }
+}
+
+void testled()
+{
+  int a = 0;
+  while(1)
+  {
+    gpio_set(test, a);
+    a ^= 1;
+    vTaskDelay(500);
   }
 }
 
@@ -40,6 +51,8 @@ USBD_Usr_cb_TypeDef usrcb =
 
 int main(void)
 {
+  test = make_pin(gpio_port_d, 15);
+  gpio_config(test, pin_dir_write, pull_none);
   printf("test\n");
   pin_t sof = make_pin(gpio_port_a, 8);
   pin_t vbus = make_pin(gpio_port_a, 9);
@@ -85,6 +98,9 @@ Program received signal SIGINT, Interrupt.
 #2  0x08000cba in general_handler () at arm/Core/CM4F/startup.s:215
 ...
 */
+    xTaskCreate(testled, (const signed char *)NULL, configMINIMAL_STACK_SIZE, (void *)NULL, tskIDLE_PRIORITY, NULL);
+    vTaskStartScheduler();
+
 #ifdef RTOS_DEBUG
     xTaskCreate(sendData, (const signed char *)NULL, configMINIMAL_STACK_SIZE, (void *)NULL, tskIDLE_PRIORITY, NULL);
 
