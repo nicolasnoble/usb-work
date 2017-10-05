@@ -7,6 +7,8 @@
 
 #include <gpio.h>
 
+#include <stm32f4xx.h> //For RCC
+
 __ALIGN_BEGIN USB_OTG_CORE_HANDLE  USB_OTG_dev __ALIGN_END;
 
 
@@ -49,8 +51,41 @@ USBD_Usr_cb_TypeDef usrcb =
   nothing,
 };
 
+extern uint32_t SystemCoreClock;
+
+/*
+HSE_VALUE=8000000
+PLL_M=8
+USE_HSE_BYPASS
+
+PLL_Q      7
+PLL_N      336
+PLL_P      2
+
+ PLL_VCO = (HSE_VALUE or HSI_VALUE / PLL_M) * PLL_N
+336000000
+
+ USB OTG FS, SDIO and RNG Clock =  PLL_VCO / PLLQ
+48000000
+ SYSCLK = PLL_VCO / PLL_P
+168000000
+*/
+
 int main(void)
 {
+  printf("CPU family: PORT_CPU_FAMILY\n");
+  printf("CPU subfamily: PORT_CPU_FAMILY_SUBFAMILY\n");
+  printf("CPU flavor: PORT_CPU_FLAVOR\n");
+  printf("CPU: PORT_CPU\n");
+  printf("------------------------------\n");
+  printf("HSE_VALUE=%d\n", HSE_VALUE);
+  printf("HSI_VALUE=%d\n", HSI_VALUE);
+  printf("------------------------------\n");
+  printf("SystemCoreClock=%d\n", SystemCoreClock);
+  printf("RCC->CR %0x\n", RCC->CR);
+  printf("RCC->CFGR %0x\n", RCC->CFGR);
+  printf("RCC->PLLCFGR %0x\n", RCC->PLLCFGR);
+
   test = make_pin(gpio_port_d, 15);
   gpio_config(test, pin_dir_write, pull_none);
   printf("test\n");
