@@ -24,6 +24,7 @@
 #include "usbd_ioreq.h"
 #include "usbd_desc.h"
 
+#include <string.h>
 
 /** @addtogroup STM32_USB_OTG_DEVICE_LIBRARY
   * @{
@@ -398,7 +399,8 @@ static void USBD_GetDescriptor(USB_OTG_CORE_HANDLE  *pdev,
     break;
 
   case USB_DESC_TYPE_STRING:
-    get_USB_string_descriptor((uint8_t)(req->wValue));
+      pbuf = get_USB_string_descriptor((uint8_t)(req->wValue));
+      len = pbuf[0];
 #if 0
     switch ((uint8_t)(req->wValue))
     {

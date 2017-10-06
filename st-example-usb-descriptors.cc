@@ -1,6 +1,7 @@
 //descriptors
 #include "usb_descriptors.hh"
 
+typedef USB::StringDescriptor<typestring_is("???")> lang;
 typedef USB::StringDescriptor<typestring_is("GrumpyCoders")> manufacturer;
 typedef USB::StringDescriptor<typestring_is("Custom HID device")> product;
 typedef USB::StringDescriptor<typestring_is("00000000011C")> serial;
@@ -8,6 +9,7 @@ typedef USB::StringDescriptor<typestring_is("HID Config")> config;
 typedef USB::StringDescriptor<typestring_is("HID Interface")> interface;
 
 typedef USB::StringCollection<
+    lang,
     manufacturer,
     product,
     serial,
