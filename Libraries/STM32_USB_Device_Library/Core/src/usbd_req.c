@@ -383,7 +383,7 @@ static void USBD_GetDescriptor(USB_OTG_CORE_HANDLE  *pdev,
     break;
 
   case USB_DESC_TYPE_CONFIGURATION:
-#if 1
+#if 0
 
     pbuf   = (uint8_t *)pdev->dev.class_cb->GetConfigDescriptor(pdev->cfg.speed, &len);
   #ifdef USB_OTG_HS_CORE
@@ -399,7 +399,7 @@ static void USBD_GetDescriptor(USB_OTG_CORE_HANDLE  *pdev,
     //len = pbuf[0];
 #else
     pbuf = get_USB_configuration_descriptor(1); //1 = FS
-    len = pbuf[2]; //totallength
+    len = (((uint16_t) pbuf[3]) << 8) + pbuf[2]; //totallength
     pdev->dev.pConfig_descriptor = pbuf;
 #endif
     break;

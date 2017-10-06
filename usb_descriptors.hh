@@ -162,7 +162,7 @@ namespace USB {
 
 template<size_t L>
 struct StringDescriptorHeader {
-    uint8_t m_bLenght = 2 + L;
+    uint8_t m_bLenght = 2 + L * 2;
     uint8_t m_bDescriptorType = 3;
 } USB_PACKED;
 
@@ -490,7 +490,7 @@ struct ConfigurationDescriptor : ConfigurationDescriptorBase {
     }
     uint8_t m_bLength = 9;
     uint8_t m_bDescriptorType = 2;
-    uint16_t m_wTotalLength = 9 + sizeof(InterfaceDescriptorList);
+    usb_template_helpers::pack16<9 + sizeof(InterfaceDescriptorList)> m_wTotalLength;
     uint8_t m_bNumInterfaces = InterfaceDescriptorList::bNumInterfaces;
     uint8_t m_bConfigurationValue;
     uint8_t m_iConfiguration = ConfigurationString;
