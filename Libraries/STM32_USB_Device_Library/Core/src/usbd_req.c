@@ -367,7 +367,7 @@ static void USBD_GetDescriptor(USB_OTG_CORE_HANDLE  *pdev,
                                USB_SETUP_REQ *req)
 {
   uint16_t len = 0;
-  const uint8_t *pbuf = NULL;
+   uint8_t *pbuf = NULL;
 
   switch (req->wValue >> 8)
   {
@@ -383,19 +383,25 @@ static void USBD_GetDescriptor(USB_OTG_CORE_HANDLE  *pdev,
     break;
 
   case USB_DESC_TYPE_CONFIGURATION:
-  /*
-      pbuf   = (uint8_t *)pdev->dev.class_cb->GetConfigDescriptor(pdev->cfg.speed, &len);
-#ifdef USB_OTG_HS_CORE
+#if 1
+
+    pbuf   = (uint8_t *)pdev->dev.class_cb->GetConfigDescriptor(pdev->cfg.speed, &len);
+  #ifdef USB_OTG_HS_CORE
     if((pdev->cfg.speed == USB_OTG_SPEED_FULL )&&
        (pdev->cfg.phy_itface  == USB_OTG_ULPI_PHY))
     {
       pbuf   = (uint8_t *)pdev->dev.class_cb->GetOtherConfigDescriptor(pdev->cfg.speed, &len);
     }
-#endif
+  #endif
     pbuf[1] = USB_DESC_TYPE_CONFIGURATION;
-    pdev->dev.pConfig_descriptor = pbuf;*/
+    pdev->dev.pConfig_descriptor = pbuf;
+
+    //len = pbuf[0];
+#else
     pbuf = get_USB_configuration_descriptor(1); //1 = FS
-    len = pbuf[0];
+    len = pbuf[2]; //totallength
+    pdev->dev.pConfig_descriptor = pbuf;
+#endif
     break;
 
   case USB_DESC_TYPE_STRING:

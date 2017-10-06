@@ -1,7 +1,6 @@
 //descriptors
 #include "usb_descriptors.hh"
 
-typedef USB::StringDescriptor<typestring_is("???")> lang;
 typedef USB::StringDescriptor<typestring_is("GrumpyCoders")> manufacturer;
 typedef USB::StringDescriptor<typestring_is("Custom HID device")> product;
 typedef USB::StringDescriptor<typestring_is("00000000011C")> serial;
@@ -9,7 +8,6 @@ typedef USB::StringDescriptor<typestring_is("HID Config")> config;
 typedef USB::StringDescriptor<typestring_is("HID Interface")> interface;
 
 typedef USB::StringCollection<
-    lang,
     manufacturer,
     product,
     serial,
@@ -52,14 +50,14 @@ static const USB::DeviceDescriptor<
                 USB::ConfigurationSelfPowered
             >,
             USB::MaxPower<100>,
-            strings::find<config>(),
+            strings::find<config>(), //0 in st descriptor
             USB::InterfaceDescriptorList<
                 USB::InterfaceAlternateList<
                     USB::InterfaceDescriptorExtended<
                         USB::InterfaceClass_HID,
                         USB::InterfaceSubClass<1>,
                         USB::InterfaceProtocol<2>,
-                        strings::find<interface>(),
+                        strings::find<interface>(), //0 in st descriptor
                         USB::OptionalDescriptorList<ExtraDescriptor>,
                         USB::EndpointDescriptorList<
                             USB::EndpointDescriptor<
