@@ -1,20 +1,107 @@
 #pragma once
 
+/**
+  * Prologue, or why all this madness
+  * =================================
+  *
+  * USB is a complex protocol, possibly unnecessarily so. I've seen a lot
+  * of binary-based protocols, and many were better than USB. Not all
+  * though, and there are still a lot worse than that.
+  *
+  * But still. On paper, USB is a clean data tree, each node being a
+  * descriptor. See http://www.beyondlogic.org/usbnutshell/usb5.shtml for
+  * some details. When translated into binary however, things aren't that
+  * straightforward anymore. The USB host will query the Device Descriptor
+  * node alone first, but then will expect each whole Configuration
+  * Descriptor in a single bulk. Or almost whole. When you get into
+  * specific devices, such as the HID class, portions of the tree will
+  * get sent out in separate parts, using a completely different format
+  * than other descriptors, while collapsing neighbour nodes into a single
+  * binary blob.
+  *
+  * In all fairness, each individual component still makes a lot of sense,
+  * but there is little overall coherence, as if the USB specs were written
+  * by a collection of individual workgroups who eventually compromised
+  * into a patchworked document.
+  *
+  * Because of this, it's difficult to come up with a good way to write
+  * the binary blobs describing a USB device.
+  *
+  * Most of the time, people will just copy/paste the same binary blobs
+  * over and over, patching it to make it work for them, but with
+  * little understanding overall of what's going on. There are also tools
+  * that will spew out these binary blobs based on some way to describe
+  * your device. Either these tools are going to be incomplete, not free,
+  * platform-specific, or clunky. There are also people who try to do the
+  * right thing, and will write code that handles the whole generation of
+  * the descriptors at runtime. While this approach is probably the best
+  * for consistency and sanity, its ROM and RAM footprint aren't exactly
+  * adequate for low-end microcontroller usage.
+  *
+  * We are proposing an alternative way that provides a little bit of
+  * the best of all worlds. The following code will allow you to
+  * generate your descriptors at compilation time, with zero runtime cost,
+  * either CPU or RAM, and with no extra ROM data, while describing them
+  * using a typechecked tree structure. The drawback is it requires a
+  * C++11 compiler, with a little bit of its headers. It doesn't require
+  * any C++ runtime however, only purely header-based templates.
+  *
+  *
+  * Rationale
+  * =========
+  *
+  * We are going to use C++ templates and types to handle the logic of
+  * the tree, and dealing with consistency and sanity checks. The
+  * types themselves are sometimes going to hold member data, that will
+  * eventually transform into the actual descriptor information we need
+  * once we instanciate the root tree type. Therefore, the act of
+  * instanciating the type will both trigger compilation-time checks,
+  * and generate the data blob we will need to send over to the USB host.
+  *
+  * But it's important to realize that the types are what are holding the
+  * important information, not their members. Therefore, all of the code
+  * is going to use a lot of C++ typing thoeyr.
+  */
+
 #include <stdint.h>
 #include <cstddef>
 #include <type_traits>
+/**
+  * In order to handle strings properly, we will need them as C++ types.
+  * This header provides the typestring_is<> variadic template, that will
+  * transform its string argument into a list of characters.
+  */
+  
 #include "typestring.hh"
 
+/**
+  * This code will be gcc / clang only anyway, so I'm not going to do
+  * anything special for Visual Studio and structure packing.
+  */
+#ifndef USB_PACKED
 #define USB_PACKED __attribute__((packed))
+#endif
 
 namespace usb_template_helpers {
 
+/**
+  * This template transforms a uint16_t into a packed little endian
+  * blob. Only uint8_t should be used overall.
+  */
 template<uint16_t value>
 struct pack16 {
     uint8_t m_lo = value & 0xff;
     uint8_t m_hi = (value >> 8) & 0xff;
 } USB_PACKED;
 
+/**
+  * We will make heavy usage of tuple<>-like structures all over the code,
+  * but we can't use the std version, because we need better ordering control,
+  * as well as better type checking. The way tuples work is fairly well known
+  * at that point, so I am not going to explain this. There are some fairly
+  * good references on the Internet describing how tuples work internally,
+  * by creating a sequence
+  */
 template<size_t... indices>
 struct index_sequence {
     using type = index_sequence<indices...>;

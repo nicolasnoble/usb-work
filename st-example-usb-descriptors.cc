@@ -19,15 +19,15 @@ static const strings strings_collection;
 
 struct ExtraDescriptor : USB::OptionalDescriptorBase {
     uint8_t m_extra[9] = {
-        0x09,
-        0x21,
-        0x11,
-        0x01,
-        0x00,
-        0x01,
-        0x22,
-        0x4a,
-        0x00
+        0x09, // b len
+        0x21, // b descriptor type (0x21 = HID)
+        0x11, // w HID version
+        0x01, // w 1.11
+        0x00, // b country
+        0x01, // b number of hid class
+        0x22, // b report descriptor type
+        0x4a, // w total length of
+        0x00  // w report descriptor
     };
 } __attribute__((packed));
 
