@@ -124,7 +124,7 @@ static USB_OTG_STS USB_OTG_CoreReset(USB_OTG_CORE_HANDLE *pdev)
   /* Wait for AHB master IDLE state. */
   do
   {
-    USB_OTG_BSP_uDelay(3);
+    USB_OTG_BSP_uDelay(3000);
     greset.d32 = USB_OTG_READ_REG32(&pdev->regs.GREGS->GRSTCTL);
     if (++count > 200000)
     {
@@ -402,7 +402,7 @@ USB_OTG_STS USB_OTG_CoreInit(USB_OTG_CORE_HANDLE *pdev)
     }
 
     USB_OTG_WRITE_REG32 (&pdev->regs.GREGS->GCCFG, gccfg.d32);
-    USB_OTG_BSP_mDelay(20);
+    USB_OTG_BSP_uDelay(20000);
     /* Program GUSBCFG.OtgUtmifsSel to I2C*/
     usbcfg.d32 = USB_OTG_READ_REG32(&pdev->regs.GREGS->GUSBCFG);
 
@@ -423,11 +423,11 @@ USB_OTG_STS USB_OTG_CoreInit(USB_OTG_CORE_HANDLE *pdev)
       i2cctl.b.addr = 0x2D;
       USB_OTG_WRITE_REG32 (&pdev->regs.GREGS->GI2CCTL, i2cctl.d32);
 
-      USB_OTG_BSP_mDelay(200);
+      USB_OTG_BSP_uDelay(200000);
 
       i2cctl.b.i2cen = 1;
       USB_OTG_WRITE_REG32 (&pdev->regs.GREGS->GI2CCTL, i2cctl.d32);
-      USB_OTG_BSP_mDelay(200);
+      USB_OTG_BSP_uDelay(200000);
     }
   }
   /* case the HS core is working in FS mode */
@@ -511,7 +511,7 @@ USB_OTG_STS USB_OTG_FlushTxFifo (USB_OTG_CORE_HANDLE *pdev , uint32_t num )
   }
   while (greset.b.txfflsh == 1);
   /* Wait for 3 PHY Clocks*/
-  USB_OTG_BSP_uDelay(3);
+  USB_OTG_BSP_uDelay(3000);
   return status;
 }
 
@@ -540,7 +540,7 @@ USB_OTG_STS USB_OTG_FlushRxFifo( USB_OTG_CORE_HANDLE *pdev )
   }
   while (greset.b.rxfflsh == 1);
   /* Wait for 3 PHY Clocks*/
-  USB_OTG_BSP_uDelay(3);
+  USB_OTG_BSP_uDelay(3000);
   return status;
 }
 
@@ -571,7 +571,7 @@ USB_OTG_STS USB_OTG_SetCurrentMode(USB_OTG_CORE_HANDLE *pdev , uint8_t mode)
   }
 
   USB_OTG_WRITE_REG32(&pdev->regs.GREGS->GUSBCFG, usbcfg.d32);
-  USB_OTG_BSP_mDelay(50);
+  USB_OTG_BSP_uDelay(50000);
   return status;
 }
 

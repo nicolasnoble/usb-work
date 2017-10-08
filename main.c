@@ -1,6 +1,5 @@
 #include "main.h"
 #include "usbd_hid_core.h"
-//#include "usbd_desc.h"
 
 #include <FreeRTOS.h>
 #include <task.h>
@@ -10,10 +9,42 @@
 #include <stm32f4xx.h> //For RCC
 
 __ALIGN_BEGIN USB_OTG_CORE_HANDLE  USB_OTG_dev __ALIGN_END;
-
-extern  USBD_DEVICE USR_desc;
+extern uint32_t USBD_OTG_ISR_Handler (USB_OTG_CORE_HANDLE *pdev);
 
 #define RTOS_DEBUG
+
+void USB_OTG_BSP_uDelay (const uint32_t usec)
+{
+  uint32_t count = 0;
+  const uint32_t utime = (120 * usec / 7);
+  do
+  {
+    if ( ++count > utime )
+    {
+      return ;
+    }
+  }
+  while (1);
+}
+
+void OTG_FS_WKUP_IRQHandler(void)
+{
+  if(USB_OTG_dev.cfg.low_power)
+  {
+  /* Reset SLEEPDEEP and SLEEPONEXIT bits */
+  SCB->SCR &= (uint32_t)~((uint32_t)(SCB_SCR_SLEEPDEEP_Msk | SCB_SCR_SLEEPONEXIT_Msk));
+
+  /* After wake-up from sleep mode, reconfigure the system clock */
+  SystemInit();
+    USB_OTG_UngateClock(&USB_OTG_dev);
+  }
+  EXTI_ClearITPendingBit(EXTI_Line18);
+}
+
+void OTG_FS_IRQHandler(void)
+{
+  USBD_OTG_ISR_Handler (&USB_OTG_dev);
+}
 
 void sendData()
 {
@@ -24,20 +55,6 @@ void sendData()
     //vTaskDelay(100);
   }
 }
-
-void nothing(void){}
-void nothing2(uint8_t foo){}
-
-USBD_Usr_cb_TypeDef usrcb =
-{
-  nothing,
-  nothing2,
-  nothing,
-  nothing,
-  nothing,
-  nothing,
-  nothing,
-};
 
 extern uint32_t SystemCoreClock;
 
@@ -90,8 +107,8 @@ int main(void)
 
   //set callbacks
   USB_OTG_dev.dev.class_cb = &USBD_HID_cb;
-  USB_OTG_dev.dev.usr_cb = &usrcb; //nothing
-  USB_OTG_dev.dev.usr_device = &USR_desc;
+  USB_OTG_dev.dev.usr_cb = NULL;
+  USB_OTG_dev.dev.usr_device = NULL;
 
   //configure endpoints
   DCD_Init(&USB_OTG_dev , USB_OTG_FS_CORE_ID);

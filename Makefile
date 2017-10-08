@@ -6,8 +6,6 @@ default: all
 TARGET = test-usb.bin
 TARGET_SRCS = ./main.c \
   ./st-example-usb-descriptors.cc \
-  ./stm32f4xx_it.c \
-  ./usb_bsp.c \
   ./Libraries/STM32_USB_Device_Library/Class/hid/src/usbd_hid_core.c \
   ./Libraries/STM32_USB_Device_Library/Core/src/usbd_core.c \
   ./Libraries/STM32_USB_Device_Library/Core/src/usbd_ioreq.c \
@@ -15,9 +13,6 @@ TARGET_SRCS = ./main.c \
   ./Libraries/STM32_USB_OTG_Driver/src/usb_core.c \
   ./Libraries/STM32_USB_OTG_Driver/src/usb_dcd.c \
   ./Libraries/STM32_USB_OTG_Driver/src/usb_dcd_int.c \
-  ./Utilities/STM32F4-Discovery/stm32f4_discovery.c \
-
-#  ./usbd_usr.c \
 
 LIBDEPS = \
 $(ROOTDIR)/FreeRTOS/libFreeRTOS.a \
@@ -31,7 +26,6 @@ $(ROOTDIR)/hardware/libhardware.a \
 LIBS = -Wl,--start-group $(LIBDEPS) -Wl,--end-group
 TARGET_INCLUDES = \
   ./include \
-  ./Utilities/STM32F4-Discovery \
   ./Libraries/STM32_USB_Device_Library/Class/hid/inc \
   ./Libraries/STM32_USB_Device_Library/Core/inc \
   ./Libraries/STM32_USB_OTG_Driver/inc \
