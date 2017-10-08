@@ -57,10 +57,15 @@
   * once we instanciate the root tree type. Therefore, the act of
   * instanciating the type will both trigger compilation-time checks,
   * and generate the data blob we will need to send over to the USB host.
+  * The code will take care of all of the derived values, such as lenghts,
+  * indexes, constants, or any other computed value the specification wants.
   *
   * But it's important to realize that the types are what are holding the
   * important information, not their members. Therefore, all of the code
-  * is going to use a lot of C++ typing thoeyr.
+  * is going to use a lot of C++ typing theory.
+  *
+  * C++11's constexpr is used throughout the code in order to make sure
+  * we have absolutely zero runtime consequences.
   */
 
 #include <stdint.h>
@@ -70,8 +75,11 @@
   * In order to handle strings properly, we will need them as C++ types.
   * This header provides the typestring_is<> variadic template, that will
   * transform its string argument into a list of characters.
+  *
+  * This follows the rest of philosophy of the code where everything is
+  * a type, including strings.
   */
-  
+
 #include "typestring.hh"
 
 /**
@@ -97,10 +105,14 @@ struct pack16 {
 /**
   * We will make heavy usage of tuple<>-like structures all over the code,
   * but we can't use the std version, because we need better ordering control,
-  * as well as better type checking. The way tuples work is fairly well known
-  * at that point, so I am not going to explain this. There are some fairly
-  * good references on the Internet describing how tuples work internally,
-  * by creating a sequence
+  * as well as better type checking. We also need specific things such as being
+  * able to compute the offset of each element when it's being instanciated,
+  * or the index of each element passed as an argument to the constructor.
+  *
+  * The way tuples work is fairly well known at that point, so I am not going
+  * to explain this code. There are some fairly good references on the Internet
+  * describing how tuples work internally, by creating a sequence in order to
+  * be able to create unique types.
   */
 template<size_t... indices>
 struct index_sequence {
@@ -232,6 +244,9 @@ template<typename basetype, typename... types>
 struct embedded_tuple :
     embedded_tuple_impl<basetype, typename make_index_sequence<sizeof...(types)>::type, types...> { } USB_PACKED;
 
+/**
+  * This concat<> helper will call | recursively on a tuple.
+  */
 template<typename rettype, typename basetype, typename type>
 constexpr rettype concat(rettype dummy, basetype ref, type value) {
     static_assert(std::is_same<basetype, type>::value, "Wrong type for concatenation");
@@ -243,16 +258,25 @@ constexpr rettype concat(rettype dummy, basetype ref, type first, Args... args) 
     return static_cast<rettype>(first) | concat(dummy, ref, args...);
 }
 
-}
+} // namespace usb_template_helpers
 
 namespace USB {
 
+/**
+  * Declaring StringDescriptor. The proper top container for a StringDescriptor
+  * is a StringCollection. Strings are not part of any descriptor directly,
+  * only their indexes within the collection. Therefore, the index returned
+  * by StringCollection::find is what should be used as the value into
+  * descriptors. See the example to see how this is used.
+  */
 template<size_t L>
 struct StringDescriptorHeader {
     uint8_t m_bLenght = 2 + L * 2;
     uint8_t m_bDescriptorType = 3;
 } USB_PACKED;
 
+// I'm not going to try doing true UTF-8 or Unicode support,
+// so let's limit ourselves to plain ASCII.
 template<size_t index, char C>
 struct CharChecker {
     constexpr CharChecker() {
@@ -269,6 +293,7 @@ struct StringCheckerInner<usb_template_helpers::index_sequence<indices...>, C...
 template<char... C>
 struct StringChecker : StringCheckerInner<typename usb_template_helpers::make_index_sequence<sizeof...(C)>::type, C...> { } USB_PACKED;
 
+// Strings are stored in little endian unicode.
 template<size_t index, char C>
 struct StringChar : usb_template_helpers::pack16<C> { } USB_PACKED;
 
@@ -290,12 +315,22 @@ struct StringDescriptor<irqus::typestring<C...>>
     , StringDescriptorHeader<sizeof...(C)>
     , StringContents<C...> { } USB_PACKED;
 
+// String index 0 is special. While it is a normal StringDescriptor, its
+// contents isn't a unicode string. Instead, it's a list of uint16 values
+// that represents supported codepages. When requesting a StringDescriptor,
+// the host will send the language ID it wants back. So technically we could
+// create multiple StringCollections with different languages, and then
+// selecting the proper one upon request. However, this would be a bit too
+// much work for very little actual benefit. So we're only going to hardcode
+// English (langid 0x409) as the only item in our list.
 struct StringDescriptor0 : StringDescriptorBase {
     uint8_t m_bLength = 4;
     uint8_t m_bDescriptorType = 3;
-    usb_template_helpers::pack16<0x409> m_wLANGID[1];
+    usb_template_helpers::pack16<0x409> m_wLANGID0;
 } USB_PACKED;
 
+// We basically inject our StringDescriptor0 at the beginning of our tuple,
+// so that the indexes are properly aligned.
 template<typename... strings>
 using string_tuple = usb_template_helpers::typed_tuple<StringDescriptorBase, StringDescriptor0, strings...>;
 
@@ -307,6 +342,8 @@ struct StringCollection
     using type = string_tuple<strings...>;
 
     typename type::offsets stringOffsets;
+    // StringCollection being the top level type for StringDescriptors,
+    // this is where we're going to return a pointer to a host request.
     constexpr const uint8_t * GetStringDescriptor(size_t index) const {
         return
             (index >= sizeof...(strings)) ? NULL :
@@ -317,6 +354,13 @@ struct StringCollection
 
 constexpr int EmptyString = 0;
 
+
+/**
+  * Declaring EndpointDescriptor. We will automatically compute the Endpoint's
+  * address based on its location inside the EndpointDescriptorList tuple.
+  * So the only argument to EndpointAddress is going to be the direction in
+  * which the Endpoint is operating.
+  */
 enum Direction {
     Out = 0,
     In = 128,
@@ -402,6 +446,10 @@ struct EndpointDescriptorList
     static constexpr size_t bNumEndpoints = sizeof...(types);
 } USB_PACKED;
 
+
+/**
+  * Declaring the base type for the optional descriptors, such as HID's.
+  */
 struct OptionalDescriptorBase { } USB_PACKED;
 struct OptionalDescriptorListBase { } USB_PACKED;
 template<typename... types>
@@ -409,6 +457,12 @@ struct OptionalDescriptorList
     : OptionalDescriptorListBase
     , usb_template_helpers::typed_tuple<OptionalDescriptorBase, types...> { } USB_PACKED;
 
+
+/**
+  * Declaring InterfaceDescriptor and InterfaceDescriptorExtended. The only
+  * difference between the two is the support for the OptionalDescriptorList,
+  * useful for USB devices that require extra descriptors such as HID devices.
+  */
 struct InterfaceClassBase { } USB_PACKED;
 template<uint8_t value>
 struct InterfaceClass : InterfaceClassBase {
@@ -538,6 +592,10 @@ struct InterfaceDescriptorList
     static constexpr size_t bNumInterfaces = sizeof...(alternates);
 } USB_PACKED;
 
+
+/**
+  * Declaring ConfigurationDescriptor.
+  */
 enum ConfigurationAttributesEnum {
     ConfigurationRemoteWakeup = 0x20,
     ConfigurationSelfPowered = 0x40,
@@ -594,6 +652,13 @@ struct ConfigurationDescriptorList
     static constexpr size_t bNumConfigurations = sizeof...(types);
 } USB_PACKED;
 
+
+/**
+  * Declaring DeviceDescriptor. This is our second top level class that
+  * requires instanciation in order to hold any data into the ROM.
+  * Once instanciated, you can static_cast<uint8_t *> its pointer in order
+  * to respond to a Device Descriptor request from the USB host.
+  */
 struct SpecificationNumberBase { } USB_PACKED;
 template<uint16_t value>
 struct SpecificationNumber : SpecificationNumberBase, usb_template_helpers::pack16<value> { } USB_PACKED;
@@ -688,6 +753,8 @@ struct DeviceDescriptor {
     ConfigurationDescriptorList m_configurationDescriptors;
 
     typename ConfigurationDescriptorList::offsets configurationOffsets;
+    // This method will return a pointer to a Configuration Descriptor, to
+    // reply to a USB host request.
     constexpr const uint8_t * GetConfigurationDescriptor(size_t index) const {
         return
             (index > ConfigurationDescriptorList::bNumConfigurations) ? NULL :
@@ -696,6 +763,6 @@ struct DeviceDescriptor {
     }
 } USB_PACKED;
 
-}
+} // namespace USB
 
 #undef USB_PACKED
