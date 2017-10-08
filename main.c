@@ -1,6 +1,6 @@
 #include "main.h"
 #include "usbd_hid_core.h"
-#include "usbd_desc.h"
+//#include "usbd_desc.h"
 
 #include <FreeRTOS.h>
 #include <task.h>
@@ -10,6 +10,8 @@
 #include <stm32f4xx.h> //For RCC
 
 __ALIGN_BEGIN USB_OTG_CORE_HANDLE  USB_OTG_dev __ALIGN_END;
+
+extern  USBD_DEVICE USR_desc;
 
 #define RTOS_DEBUG
 

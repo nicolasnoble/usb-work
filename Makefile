@@ -8,7 +8,6 @@ TARGET_SRCS = ./main.c \
   ./st-example-usb-descriptors.cc \
   ./stm32f4xx_it.c \
   ./usb_bsp.c \
-  ./usbd_desc.c \
   ./Libraries/STM32_USB_Device_Library/Class/hid/src/usbd_hid_core.c \
   ./Libraries/STM32_USB_Device_Library/Core/src/usbd_core.c \
   ./Libraries/STM32_USB_Device_Library/Core/src/usbd_ioreq.c \
