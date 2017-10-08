@@ -17,6 +17,7 @@ typedef USB::StringCollection<
 
 static const strings strings_collection;
 
+//For reminder purpose, not used anymore
 struct ExtraDescriptor : USB::OptionalDescriptorBase {
     uint8_t m_extra[9] = {
         0x09, // b len
@@ -58,7 +59,14 @@ static const USB::DeviceDescriptor<
                         USB::InterfaceSubClass<1>,
                         USB::InterfaceProtocol<2>,
                         strings::find<interface>(), //0 in st descriptor
-                        USB::OptionalDescriptorList<ExtraDescriptor>,
+                        USB::OptionalDescriptorList<
+                            USB::HID::HIDDescriptor<
+                                USB::HID::CountryCode_Not_Supported,
+                                USB::HID::ReportDescriptorIndexList<
+                                    USB::HID::ReportDescriptorIndex<0x004a>
+                                >
+                            >
+                        >,
                         USB::EndpointDescriptorList<
                             USB::EndpointDescriptor<
                                 USB::EndpointAddress<USB::In>,

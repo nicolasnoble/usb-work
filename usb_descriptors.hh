@@ -763,6 +763,90 @@ struct DeviceDescriptor {
     }
 } USB_PACKED;
 
+/*
+struct DeviceReleaseNumber : DeviceReleaseNumberBase, usb_template_helpers::pack16<value> { } USB_PACKED;
+*/
+    namespace HID {
+    struct ReportDescriptorIndexBase { } USB_PACKED;
+    template <
+      uint16_t reportsize //fix this
+    >
+    struct ReportDescriptorIndex: ReportDescriptorIndexBase {
+        constexpr ReportDescriptorIndex(size_t index) {
+            static_assert(std::is_base_of<ReportDescriptorIndexBase, ReportDescriptorIndex>::value, "Wrong ReportDescriptorIndex type");
+        }
+        uint8_t m_bDescriptorType = 0x22;
+        usb_template_helpers::pack16<reportsize> m_wDescriptorLength;
+    } USB_PACKED;
+
+    struct ReportDescriptorIndexListBase { } USB_PACKED;
+    template<typename... types>
+    struct ReportDescriptorIndexList
+        : ReportDescriptorIndexListBase
+        , usb_template_helpers::typed_indexed_tuple<ReportDescriptorIndexBase, types...> {
+        static constexpr size_t bNumReports = sizeof...(types);
+    } USB_PACKED;
+
+    struct CountryCodeBase { } USB_PACKED;
+    template<uint8_t value>
+    struct CountryCode : CountryCodeBase {
+        uint8_t m_value = value;
+    } USB_PACKED;
+    struct CountryCode_Not_Supported : CountryCode<0x00> { } USB_PACKED;
+    struct CountryCode_Arabic : CountryCode<0x01> { } USB_PACKED;
+    struct CountryCode_Belgian : CountryCode<0x02> { } USB_PACKED;
+    struct CountryCode_Canadian_Bilingual : CountryCode<0x03> { } USB_PACKED;
+    struct CountryCode_Canadian_French : CountryCode<0x04> { } USB_PACKED;
+    struct CountryCode_Czech_Republic : CountryCode<0x05> { } USB_PACKED;
+    struct CountryCode_Danish : CountryCode<0x06> { } USB_PACKED;
+    struct CountryCode_Finnish : CountryCode<0x07> { } USB_PACKED;
+    struct CountryCode_French : CountryCode<0x08> { } USB_PACKED;
+    struct CountryCode_German : CountryCode<0x09> { } USB_PACKED;
+    struct CountryCode_Greek : CountryCode<0x10> { } USB_PACKED;
+    struct CountryCode_Hebrew : CountryCode<0x11> { } USB_PACKED;
+    struct CountryCode_Hungary : CountryCode<0x12> { } USB_PACKED;
+    struct CountryCode_International_ISO : CountryCode<0x13> { } USB_PACKED;
+    struct CountryCode_Italian : CountryCode<0x14> { } USB_PACKED;
+    struct CountryCode_Japan_Katakana : CountryCode<0x15> { } USB_PACKED;
+    struct CountryCode_Korean : CountryCode<0x16> { } USB_PACKED;
+    struct CountryCode_Latin_American : CountryCode<0x17> { } USB_PACKED;
+    struct CountryCode_Netherlands_Dutch : CountryCode<0x18> { } USB_PACKED;
+    struct CountryCode_Norwegian : CountryCode<0x19> { } USB_PACKED;
+    struct CountryCode_Persian_Farsi : CountryCode<0x20> { } USB_PACKED;
+    struct CountryCode_Poland : CountryCode<0x21> { } USB_PACKED;
+    struct CountryCode_Portuguese : CountryCode<0x22> { } USB_PACKED;
+    struct CountryCode_Russia : CountryCode<0x23> { } USB_PACKED;
+    struct CountryCode_Slovakia : CountryCode<0x24> { } USB_PACKED;
+    struct CountryCode_Spanish : CountryCode<0x25> { } USB_PACKED;
+    struct CountryCode_Swedish : CountryCode<0x26> { } USB_PACKED;
+    struct CountryCode_Swiss_French : CountryCode<0x27> { } USB_PACKED;
+    struct CountryCode_Swiss_German : CountryCode<0x28> { } USB_PACKED;
+    struct CountryCode_Switzerland : CountryCode<0x29> { } USB_PACKED;
+    struct CountryCode_Taiwan : CountryCode<0x30> { } USB_PACKED;
+    struct CountryCode_Turkish_Q : CountryCode<0x31> { } USB_PACKED;
+    struct CountryCode_UK : CountryCode<0x32> { } USB_PACKED;
+    struct CountryCode_US : CountryCode<0x33> { } USB_PACKED;
+    struct CountryCode_Yugoslavia : CountryCode<0x34> { } USB_PACKED;
+    struct CountryCode_Turkish_F : CountryCode<0x35> { } USB_PACKED;
+
+    template <
+      typename CountryCode,
+      typename ReportDescriptorIndexList
+    >
+    struct HIDDescriptor : USB::OptionalDescriptorBase {
+        constexpr HIDDescriptor() {
+          static_assert(std::is_base_of<CountryCodeBase, CountryCode>::value, "Wrong CountryCode type");
+          static_assert(std::is_base_of<ReportDescriptorIndexListBase, ReportDescriptorIndexList>::value, "Wrong ReportDescriptorList type");
+        }
+        uint8_t m_bLength = 6 + 3 * sizeof(ReportDescriptorIndexList) / 3;
+        uint8_t m_bDescriptorType = 0x21;
+        usb_template_helpers::pack16<0x0111> m_bcdHID;
+        CountryCode m_CountryCode;
+        uint8_t m_NumDescriptors = sizeof(ReportDescriptorIndexList) / 3;
+        ReportDescriptorIndexList m_reportDescriptorIndexList;
+    } USB_PACKED;
+
+    } //namespace HID
 } // namespace USB
 
 #undef USB_PACKED
