@@ -29,13 +29,13 @@ void USB_OTG_BSP_uDelay (const uint32_t usec)
 
 void OTG_FS_WKUP_IRQHandler(void)
 {
-  if(USB_OTG_dev.cfg.low_power)
+  if (USB_OTG_dev.cfg.low_power)
   {
-  /* Reset SLEEPDEEP and SLEEPONEXIT bits */
-  SCB->SCR &= (uint32_t)~((uint32_t)(SCB_SCR_SLEEPDEEP_Msk | SCB_SCR_SLEEPONEXIT_Msk));
+    /* Reset SLEEPDEEP and SLEEPONEXIT bits */
+    SCB->SCR &= (uint32_t)~((uint32_t)(SCB_SCR_SLEEPDEEP_Msk | SCB_SCR_SLEEPONEXIT_Msk));
 
-  /* After wake-up from sleep mode, reconfigure the system clock */
-  SystemInit();
+    /* After wake-up from sleep mode, reconfigure the system clock */
+    SystemInit();
     USB_OTG_UngateClock(&USB_OTG_dev);
   }
   EXTI_ClearITPendingBit(EXTI_Line18);

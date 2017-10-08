@@ -73,7 +73,7 @@
 typedef enum {
   USB_OTG_OK = 0,
   USB_OTG_FAIL
-}USB_OTG_STS;
+} USB_OTG_STS;
 
 typedef enum {
   HC_IDLE = 0,
@@ -85,7 +85,7 @@ typedef enum {
   HC_XACTERR,
   HC_BBLERR,
   HC_DATATGLERR,
-}HC_STATUS;
+} HC_STATUS;
 
 typedef enum {
   URB_IDLE = 0,
@@ -93,7 +93,7 @@ typedef enum {
   URB_NOTREADY,
   URB_ERROR,
   URB_STALL
-}URB_STATE;
+} URB_STATE;
 
 typedef enum {
   CTRL_START = 0,
@@ -105,7 +105,7 @@ typedef enum {
   CTRL_BBLERR,
   CTRL_DATATGLERR,
   CTRL_FAIL
-}CTRL_STATUS;
+} CTRL_STATUS;
 
 
 typedef struct USB_OTG_hc
@@ -124,8 +124,7 @@ typedef struct USB_OTG_hc
   uint8_t       toggle_in;
   uint8_t       toggle_out;
   uint32_t       dma_addr;
-}
-USB_OTG_HC , *PUSB_OTG_HC;
+} USB_OTG_HC , *PUSB_OTG_HC;
 
 typedef struct USB_OTG_ep
 {
@@ -146,10 +145,7 @@ typedef struct USB_OTG_ep
   uint32_t       rem_data_len;
   uint32_t       total_data_len;
   uint32_t       ctl_data_len;
-
-}
-
-USB_OTG_EP , *PUSB_OTG_EP;
+} USB_OTG_EP , *PUSB_OTG_EP;
 
 
 
@@ -165,9 +161,7 @@ typedef struct USB_OTG_core_cfg
   uint8_t       Sof_output;
   uint8_t       low_power;
   uint8_t       coreID;
-
-}
-USB_OTG_CORE_CFGS, *PUSB_OTG_CORE_CFGS;
+} USB_OTG_CORE_CFGS, *PUSB_OTG_CORE_CFGS;
 
 
 
@@ -224,7 +218,6 @@ typedef struct _Device_cb
 #ifdef USB_SUPPORT_USER_STRING_DESC
   uint8_t  *(*GetUsrStrDescriptor)( uint8_t speed ,uint8_t index,  uint16_t *length);
 #endif
-
 } USBD_Class_cb_TypeDef;
 
 
@@ -240,8 +233,7 @@ typedef struct _USBD_USR_PROP
   void (*DeviceConnected)(void);
   void (*DeviceDisconnected)(void);
 
-}
-USBD_Usr_cb_TypeDef;
+} USBD_Usr_cb_TypeDef;
 
 typedef struct _DCD
 {
@@ -257,8 +249,7 @@ typedef struct _DCD
   USBD_Usr_cb_TypeDef           *usr_cb;
   USBD_DEVICE                   *usr_device;
   uint8_t        *pConfig_descriptor;
- }
-DCD_DEV , *DCD_PDEV;
+ } DCD_DEV , *DCD_PDEV;
 
 
 typedef struct _HCD
@@ -272,8 +263,7 @@ typedef struct _HCD
   USB_OTG_HC               hc [USB_OTG_MAX_TX_FIFOS];
   uint16_t                 channel [USB_OTG_MAX_TX_FIFOS];
   USB_OTG_hPort_TypeDef    *port_cb;
-}
-HCD_DEV , *USB_OTG_USBH_PDEV;
+} HCD_DEV , *USB_OTG_USBH_PDEV;
 
 
 typedef struct _OTG
@@ -281,8 +271,7 @@ typedef struct _OTG
   uint8_t    OTG_State;
   uint8_t    OTG_PrevState;
   uint8_t    OTG_Mode;
-}
-OTG_DEV , *USB_OTG_USBO_PDEV;
+} OTG_DEV , *USB_OTG_USBO_PDEV;
 
 typedef struct USB_OTG_handle
 {
@@ -297,8 +286,7 @@ typedef struct USB_OTG_handle
 #ifdef USE_OTG_MODE
   OTG_DEV     otg;
 #endif
-}
-USB_OTG_CORE_HANDLE , *PUSB_OTG_CORE_HANDLE;
+} USB_OTG_CORE_HANDLE , *PUSB_OTG_CORE_HANDLE;
 
 /**
   * @}

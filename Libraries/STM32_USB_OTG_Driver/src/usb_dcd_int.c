@@ -502,8 +502,8 @@ static uint32_t DCD_HandleInEP_ISR(USB_OTG_CORE_HANDLE *pdev)
 static uint32_t DCD_HandleOutEP_ISR(USB_OTG_CORE_HANDLE *pdev)
 {
   uint32_t ep_intr;
-  USB_OTG_DOEPINTn_TypeDef  doepint;
-  USB_OTG_DEPXFRSIZ_TypeDef  deptsiz;
+  USB_OTG_DOEPINTn_TypeDef doepint;
+  USB_OTG_DEPXFRSIZ_TypeDef deptsiz;
   uint32_t epnum = 0;
 
   doepint.d32 = 0;
@@ -511,9 +511,9 @@ static uint32_t DCD_HandleOutEP_ISR(USB_OTG_CORE_HANDLE *pdev)
   /* Read in the device interrupt bits */
   ep_intr = USB_OTG_ReadDevAllOutEp_itr(pdev);
 
-  while ( ep_intr )
+  while (ep_intr)
   {
-    if (ep_intr&0x1)
+    if (ep_intr & 0x1)
     {
 
       doepint.d32 = USB_OTG_ReadDevOutEP_itr(pdev, epnum);
@@ -557,7 +557,6 @@ static uint32_t DCD_HandleOutEP_ISR(USB_OTG_CORE_HANDLE *pdev)
       /* Setup Phase Done (control EPs) */
       if ( doepint.b.setup )
       {
-
         /* inform the upper layer that a setup packet is available */
         /* SETUP COMPLETE */
         USBD_DCD_INT_fops->SetupStage(pdev);
@@ -579,7 +578,6 @@ static uint32_t DCD_HandleOutEP_ISR(USB_OTG_CORE_HANDLE *pdev)
 static uint32_t DCD_HandleSof_ISR(USB_OTG_CORE_HANDLE *pdev)
 {
   USB_OTG_GINTSTS_TypeDef  GINTSTS;
-
 
   USBD_DCD_INT_fops->SOF(pdev);
 
