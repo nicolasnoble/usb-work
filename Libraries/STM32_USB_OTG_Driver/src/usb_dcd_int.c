@@ -487,27 +487,27 @@ static uint32_t DCD_HandleRxStatusQueueLevel_ISR(USB_OTG_CORE_HANDLE *pdev) {
     ep = &pdev->dev.out_ep[status.b.epnum];
 
     switch (status.b.pktsts) {
-        case STS_GOUT_NAK:
-            break;
-        case STS_DATA_UPDT:
-            if (status.b.bcnt) {
-                USB_OTG_ReadPacket(pdev, ep->xfer_buff, status.b.bcnt);
-                ep->xfer_buff += status.b.bcnt;
-                ep->xfer_count += status.b.bcnt;
-            }
-            break;
-        case STS_XFER_COMP:
-            break;
-        case STS_SETUP_COMP:
-            break;
-        case STS_SETUP_UPDT:
-            /* Copy the setup packet received in FIFO into the setup buffer in
-             * RAM */
-            USB_OTG_ReadPacket(pdev, pdev->dev.setup_packet, 8);
+    case STS_GOUT_NAK:
+        break;
+    case STS_DATA_UPDT:
+        if (status.b.bcnt) {
+            USB_OTG_ReadPacket(pdev, ep->xfer_buff, status.b.bcnt);
+            ep->xfer_buff += status.b.bcnt;
             ep->xfer_count += status.b.bcnt;
-            break;
-        default:
-            break;
+        }
+        break;
+    case STS_XFER_COMP:
+        break;
+    case STS_SETUP_COMP:
+        break;
+    case STS_SETUP_UPDT:
+        /* Copy the setup packet received in FIFO into the setup buffer in
+         * RAM */
+        USB_OTG_ReadPacket(pdev, pdev->dev.setup_packet, 8);
+        ep->xfer_count += status.b.bcnt;
+        break;
+    default:
+        break;
     }
 
     /* Enable the Rx Status Queue Level interrupt */
