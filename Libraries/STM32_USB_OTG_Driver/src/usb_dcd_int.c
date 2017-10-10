@@ -64,11 +64,9 @@ uint32_t USBD_OTG_EP1OUT_ISR_Handler(USB_OTG_CORE_HANDLE *pdev) {
         /* Clear the bit in DOEPINTn for this interrupt */
         CLEAR_OUT_EP_INTR(1, xfercompl);
         if (pdev->cfg.dma_enable == 1) {
-            deptsiz.d32 =
-                USB_OTG_READ_REG32(&(pdev->regs.OUTEP_REGS[1]->DOEPTSIZ));
+            deptsiz.d32 = USB_OTG_READ_REG32(&(pdev->regs.OUTEP_REGS[1]->DOEPTSIZ));
             /*ToDo : handle more than one single MPS size packet */
-            pdev->dev.out_ep[1].xfer_count =
-                pdev->dev.out_ep[1].maxpacket - deptsiz.b.xfersize;
+            pdev->dev.out_ep[1].xfer_count = pdev->dev.out_ep[1].maxpacket - deptsiz.b.xfersize;
         }
         /* Inform upper layer: data ready */
         /* RX COMPLETE */
@@ -341,15 +339,13 @@ static uint32_t DCD_HandleInEP_ISR(USB_OTG_CORE_HANDLE *pdev) {
             diepint.d32 = DCD_ReadDevInEP(pdev, epnum); /* Get In ITR status */
             if (diepint.b.xfercompl) {
                 fifoemptymsk = 0x1 << epnum;
-                USB_OTG_MODIFY_REG32(&pdev->regs.DREGS->DIEPEMPMSK,
-                                     fifoemptymsk, 0);
+                USB_OTG_MODIFY_REG32(&pdev->regs.DREGS->DIEPEMPMSK, fifoemptymsk, 0);
                 CLEAR_IN_EP_INTR(epnum, xfercompl);
                 /* TX COMPLETE */
                 USBD_DCD_INT_fops->DataInStage(pdev, epnum);
 
                 if (pdev->cfg.dma_enable == 1) {
-                    if ((epnum == 0) &&
-                        (pdev->dev.device_state == USB_OTG_EP0_STATUS_IN)) {
+                    if ((epnum == 0) && (pdev->dev.device_state == USB_OTG_EP0_STATUS_IN)) {
                         /* prepare to rx more setup packets */
                         USB_OTG_EP0_OutStart(pdev);
                     }
@@ -412,19 +408,16 @@ static uint32_t DCD_HandleOutEP_ISR(USB_OTG_CORE_HANDLE *pdev) {
                 /* Clear the bit in DOEPINTn for this interrupt */
                 CLEAR_OUT_EP_INTR(epnum, xfercompl);
                 if (pdev->cfg.dma_enable == 1) {
-                    deptsiz.d32 = USB_OTG_READ_REG32(
-                        &(pdev->regs.OUTEP_REGS[epnum]->DOEPTSIZ));
+                    deptsiz.d32 = USB_OTG_READ_REG32(&(pdev->regs.OUTEP_REGS[epnum]->DOEPTSIZ));
                     /*ToDo : handle more than one single MPS size packet */
-                    pdev->dev.out_ep[epnum].xfer_count =
-                        pdev->dev.out_ep[epnum].maxpacket - deptsiz.b.xfersize;
+                    pdev->dev.out_ep[epnum].xfer_count = pdev->dev.out_ep[epnum].maxpacket - deptsiz.b.xfersize;
                 }
                 /* Inform upper layer: data ready */
                 /* RX COMPLETE */
                 USBD_DCD_INT_fops->DataOutStage(pdev, epnum);
 
                 if (pdev->cfg.dma_enable == 1) {
-                    if ((epnum == 0) &&
-                        (pdev->dev.device_state == USB_OTG_EP0_STATUS_OUT)) {
+                    if ((epnum == 0) && (pdev->dev.device_state == USB_OTG_EP0_STATUS_OUT)) {
                         /* prepare to rx more setup packets */
                         USB_OTG_EP0_OutStart(pdev);
                     }
@@ -529,8 +522,7 @@ static uint32_t DCD_HandleRxStatusQueueLevel_ISR(USB_OTG_CORE_HANDLE *pdev) {
 * @param  pdev: device instance
 * @retval status
 */
-static uint32_t DCD_WriteEmptyTxFifo(USB_OTG_CORE_HANDLE *pdev,
-                                     uint32_t epnum) {
+static uint32_t DCD_WriteEmptyTxFifo(USB_OTG_CORE_HANDLE *pdev, uint32_t epnum) {
     USB_OTG_DTXFSTSn_TypeDef txstatus;
     USB_OTG_EP *ep;
     uint32_t len = 0;
@@ -548,8 +540,7 @@ static uint32_t DCD_WriteEmptyTxFifo(USB_OTG_CORE_HANDLE *pdev,
     len32b = (len + 3) / 4;
     txstatus.d32 = USB_OTG_READ_REG32(&pdev->regs.INEP_REGS[epnum]->DTXFSTS);
 
-    while (txstatus.b.txfspcavail > len32b && ep->xfer_count < ep->xfer_len &&
-           ep->xfer_len != 0) {
+    while (txstatus.b.txfspcavail > len32b && ep->xfer_count < ep->xfer_len && ep->xfer_len != 0) {
         /* Write the FIFO */
         len = ep->xfer_len - ep->xfer_count;
 
@@ -563,8 +554,7 @@ static uint32_t DCD_WriteEmptyTxFifo(USB_OTG_CORE_HANDLE *pdev,
         ep->xfer_buff += len;
         ep->xfer_count += len;
 
-        txstatus.d32 =
-            USB_OTG_READ_REG32(&pdev->regs.INEP_REGS[epnum]->DTXFSTS);
+        txstatus.d32 = USB_OTG_READ_REG32(&pdev->regs.INEP_REGS[epnum]->DTXFSTS);
     }
 
     return 1;
