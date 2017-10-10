@@ -111,52 +111,6 @@ USBD_DCD_INT_cb_TypeDef  *USBD_DCD_INT_fops = &USBD_DCD_INT_cb;
 * @}
 */
 
-/** @defgroup USBD_CORE_Private_Functions
-* @{
-*/
-
-/**
-* @brief  USBD_Init
-*         Initailizes the device stack and load the class driver
-* @param  pdev: device instance
-* @param  core_address: USB OTG core ID
-* @param  class_cb: Class callback structure address
-* @param  usr_cb: User callback structure address
-* @retval None
-*/
-void USBD_Init(USB_OTG_CORE_HANDLE *pdev,
-               USB_OTG_CORE_ID_TypeDef coreID,
-               USBD_DEVICE *pDevice,
-               USBD_Class_cb_TypeDef *class_cb,
-               USBD_Usr_cb_TypeDef *usr_cb)
-{
-  /* Hardware Init */
-  USB_OTG_BSP_Init(pdev);
-
-  USBD_DeInit(pdev);
-
-  /*Register class and user callbacks */
-  pdev->dev.class_cb = class_cb;
-  pdev->dev.usr_device = pDevice;
-
-  /* set USB OTG core params */
-  DCD_Init(pdev , coreID);
-
-  /* Enable Interrupts */
-  USB_OTG_BSP_EnableInterrupt(pdev);
-}
-
-/**
-* @brief  USBD_DeInit
-*         Re-Initialize th deviuce library
-* @param  pdev: device instance
-* @retval status: status
-*/
-USBD_Status USBD_DeInit(USB_OTG_CORE_HANDLE *pdev)
-{
-  return USBD_OK;
-}
-
 /**
 * @brief  USBD_SetupStage
 *         Handle the setup stage

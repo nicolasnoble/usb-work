@@ -1,10 +1,13 @@
-#include "main.h"
+//#include "main.h"
 #include "usbd_hid_core.h"
 
 #include <FreeRTOS.h>
 #include <task.h>
+#include <stdio.h>
 
+#include <hardware.h>
 #include <gpio.h>
+#include <irq.h>
 
 #include <stm32f4xx.h> //For RCC
 
@@ -27,7 +30,8 @@ void USB_OTG_BSP_uDelay (const uint32_t usec)
   while (1);
 }
 
-void OTG_FS_WKUP_IRQHandler(void)
+//void OTG_FS_WKUP_IRQHandler(void)
+void usbwakeuphandler()
 {
   if (USB_OTG_dev.cfg.low_power)
   {
@@ -41,7 +45,8 @@ void OTG_FS_WKUP_IRQHandler(void)
   EXTI_ClearITPendingBit(EXTI_Line18);
 }
 
-void OTG_FS_IRQHandler(void)
+//void OTG_FS_IRQHandler(void)
+void usbhandler()
 {
   USBD_OTG_ISR_Handler (&USB_OTG_dev);
 }
@@ -103,12 +108,15 @@ int main(void)
   gpio_config_alternate(dp, pin_dir_write, pull_none, 10);
 
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
-  RCC_AHB2PeriphClockCmd(RCC_AHB2Periph_OTG_FS, ENABLE) ; 
+  RCC_AHB2PeriphClockCmd(RCC_AHB2Periph_OTG_FS, ENABLE) ;
 
   //set callbacks
   USB_OTG_dev.dev.class_cb = &USBD_HID_cb;
   USB_OTG_dev.dev.usr_cb = NULL;
   USB_OTG_dev.dev.usr_device = NULL;
+
+  set_irq_handler(OTG_FS_IRQ_handler, &usbhandler);
+  //set_irq_handler(OTG_FS_WKUP_IRQ_handler, &usbwakeuphandler);
 
   //configure endpoints
   DCD_Init(&USB_OTG_dev , USB_OTG_FS_CORE_ID);
