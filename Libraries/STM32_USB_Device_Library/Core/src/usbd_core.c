@@ -242,10 +242,9 @@ static uint8_t USBD_DataInStage(USB_OTG_CORE_HANDLE *pdev , uint8_t epnum)
       }
     }
   }
-  else if((pdev->dev.class_cb->DataIn != NULL)&&
-          (pdev->dev.device_status == USB_OTG_CONFIGURED))
+  else if(pdev->dev.device_status == USB_OTG_CONFIGURED)
   {
-    pdev->dev.class_cb->DataIn(pdev, epnum);
+    DCD_EP_Flush(pdev, HID_IN_EP);
   }
   return USBD_OK;
 }
@@ -330,7 +329,17 @@ static uint8_t USBD_SOF(USB_OTG_CORE_HANDLE  *pdev)
 
 USBD_Status USBD_SetCfg(USB_OTG_CORE_HANDLE  *pdev, uint8_t cfgidx)
 {
-  pdev->dev.class_cb->Init(pdev, cfgidx);
+  /* Open EP IN */
+  DCD_EP_Open(pdev,
+              HID_IN_EP,
+              HID_IN_PACKET,
+              USB_OTG_EP_INT);
+
+  /* Open EP OUT */
+  DCD_EP_Open(pdev,
+              HID_OUT_EP,
+              HID_OUT_PACKET,
+              USB_OTG_EP_INT);
   return USBD_OK;
 }
 
@@ -343,7 +352,9 @@ USBD_Status USBD_SetCfg(USB_OTG_CORE_HANDLE  *pdev, uint8_t cfgidx)
 */
 USBD_Status USBD_ClrCfg(USB_OTG_CORE_HANDLE  *pdev, uint8_t cfgidx)
 {
-  pdev->dev.class_cb->DeInit(pdev, cfgidx);
+  /* Close HID EPs */
+  DCD_EP_Close (pdev , HID_IN_EP);
+  DCD_EP_Close (pdev , HID_OUT_EP);
   return USBD_OK;
 }
 
@@ -392,7 +403,7 @@ static uint8_t USBD_DevConnected(USB_OTG_CORE_HANDLE  *pdev)
 static uint8_t USBD_DevDisconnected(USB_OTG_CORE_HANDLE  *pdev)
 {
   pdev->dev.class_cb->DeInit(pdev, 0);
-  return USBD_OK;
+  return USBD_ClrCfg(pdev, 0);
 }
 #endif
 /**

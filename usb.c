@@ -2,7 +2,8 @@
 
 #include <stm32f4xx.h>
 
-#include "usbd_hid_core.h"
+//#include "usbd_hid_core.h"
+#include  "usbd_ioreq.h"
 
 #include <gpio.h>
 #include <irq.h>
@@ -12,6 +13,7 @@
 
 __ALIGN_BEGIN USB_OTG_CORE_HANDLE  USB_OTG_dev __ALIGN_END;
 extern uint32_t USBD_OTG_ISR_Handler (USB_OTG_CORE_HANDLE *pdev);
+extern USBD_Class_cb_TypeDef  USBD_HID_cb;
 
 void USB_OTG_BSP_uDelay (const uint32_t usec)
 {
@@ -90,6 +92,7 @@ void usb_fs_device_init()
 
 void usb_send_report(uint8_t *buffer, uint16_t nb)
 {
-  USBD_HID_SendReport (&USB_OTG_dev, buffer, nb);
+  if (USB_OTG_dev.dev.device_status == USB_OTG_CONFIGURED )
+    DCD_EP_Tx (&USB_OTG_dev, HID_IN_EP, buffer, nb);
 }
 

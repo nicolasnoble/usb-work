@@ -642,6 +642,16 @@ struct ConfigurationDescriptor : ConfigurationDescriptorBase {
     uint8_t m_bmAttributes = ConfigurationAttributes::value;
     MaxPower m_bMaxPower;
     InterfaceDescriptorList m_interfaceDescriptors;
+
+    typename InterfaceDescriptorList::offsets interfaceOffsets;
+    // This method will return a pointer to a Interface Descriptor, to
+    // reply to a USB host request.
+    constexpr const uint8_t * GetInterfaceDescriptor(size_t index) const {
+        return
+            (index > InterfaceDescriptorList::bNumInterfaces) ? NULL :
+            (index <= 0) ? NULL :
+            reinterpret_cast<const uint8_t *>(&m_interfaceDescriptors) + reinterpret_cast<const ptrdiff_t *>(&interfaceOffsets)[index - 1];
+    }
 } USB_PACKED;
 
 struct ConfigurationDescriptorListBase { } USB_PACKED;

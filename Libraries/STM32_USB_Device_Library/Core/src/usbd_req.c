@@ -342,7 +342,7 @@ USBD_Status  USBD_StdEPReq (USB_OTG_CORE_HANDLE  *pdev, USB_SETUP_REQ  *req)
   return ret;
 }
 
-
+const uint8_t * get_USB_interface_descriptor(int configuration, int interface);
 const uint8_t * get_USB_configuration_descriptor(int index);
 const uint8_t * get_USB_device_descriptor();
 const uint8_t * get_USB_string_descriptor(int index);
