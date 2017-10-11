@@ -5,6 +5,7 @@ default: all
 
 TARGET = test-usb.bin
 TARGET_SRCS = ./main.c \
+  ./usb.c \
   ./st-example-usb-descriptors.cc \
   ./Libraries/STM32_USB_Device_Library/Class/hid/src/usbd_hid_core.c \
   ./Libraries/STM32_USB_Device_Library/Core/src/usbd_core.c \
