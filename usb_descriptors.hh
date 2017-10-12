@@ -679,16 +679,10 @@ struct ConfigurationDescriptor : ConfigurationDescriptorBase {
     uint8_t m_bmAttributes = ConfigurationAttributes::value;
     MaxPower m_bMaxPower;
     InterfaceDescriptorList m_interfaceDescriptors;
-
-    typename InterfaceDescriptorList::offsets interfaceOffsets;
-    // This method will return a pointer to a Interface Descriptor, to
-    // reply to a USB host request.
-    constexpr const uint8_t * GetInterfaceDescriptor(size_t index) const {
-        return
-            (index > InterfaceDescriptorList::bNumInterfaces) ? NULL :
-            (index <= 0) ? NULL :
-            reinterpret_cast<const uint8_t *>(&m_interfaceDescriptors) + reinterpret_cast<const ptrdiff_t *>(&interfaceOffsets)[index - 1];
-    }
+    static constexpr ptrdiff_t firstInterfaceOffset = __builtin_offsetof(
+        ConfigurationDescriptor<ConfigurationAttributes, MaxPower, ConfigurationString, InterfaceDescriptorList>,
+        m_interfaceDescriptors
+    );
 } USB_PACKED;
 
 struct ConfigurationDescriptorListBase { } USB_PACKED;
@@ -697,6 +691,7 @@ struct ConfigurationDescriptorList
     : ConfigurationDescriptorListBase
     , usb_template_helpers::typed_indexed_tuple<ConfigurationDescriptorBase, types...> {
     static constexpr size_t bNumConfigurations = sizeof...(types);
+    static constexpr ptrdiff_t firstInterfaceOffset = usb_template_helpers::type_at_index<0, types...>::type::firstInterfaceOffset;
 } USB_PACKED;
 
 
@@ -807,6 +802,14 @@ struct DeviceDescriptor {
             (index > ConfigurationDescriptorList::bNumConfigurations) ? NULL :
             (index <= 0) ? NULL :
             reinterpret_cast<const uint8_t *>(&m_configurationDescriptors) + reinterpret_cast<const ptrdiff_t *>(&configurationOffsets)[index - 1];
+    }
+    // This method will return a pointer to the first Interface Descriptor
+    // of a Configuration Descriptor.
+    constexpr const uint8_t * GetFirstInterfaceDescriptor(size_t index) const {
+        return
+            (index > ConfigurationDescriptorList::bNumConfigurations) ? NULL :
+            (index <= 0) ? NULL :
+            GetConfigurationDescriptor(index) + ConfigurationDescriptorList::firstInterfaceOffset;
     }
 } USB_PACKED;
 

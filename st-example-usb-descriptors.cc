@@ -82,8 +82,8 @@ static const USB::DeviceDescriptor<
     >
 > device_descriptor;
 
-extern "C" const uint8_t * get_USB_interface_descriptor(int configuration, int interface) {
-    return device_descriptor.GetConfigurationDescriptor(configuration).GetInterfaceDescriptor(interface);
+extern "C" const uint8_t * get_USB_first_interface_descriptor(int configuration) {
+    return device_descriptor.GetFirstInterfaceDescriptor(configuration);
 }
 
 extern "C" const uint8_t * get_USB_configuration_descriptor(int index) {

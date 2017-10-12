@@ -36,7 +36,7 @@ TARGET_CFLAGS = \
   -DSTM32F4XX \
   -DUSE_USB_OTG_FS \
 
-TARGET_CXXFLAGS = -std=c++11
+TARGET_CXXFLAGS = -std=c++11 -Wno-invalid-offsetof
 
 include $(ROOTDIR)/common.mk
 
