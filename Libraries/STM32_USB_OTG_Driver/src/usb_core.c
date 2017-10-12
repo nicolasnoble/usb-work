@@ -19,66 +19,9 @@
   ******************************************************************************
   */
 
-/* Includes ------------------------------------------------------------------*/
 #include "usb_core.h"
 #include "usb_bsp.h"
 
-
-/** @addtogroup USB_OTG_DRIVER
-* @{
-*/
-
-/** @defgroup USB_CORE
-* @brief This file includes the USB-OTG Core Layer
-* @{
-*/
-
-
-/** @defgroup USB_CORE_Private_Defines
-* @{
-*/
-
-/**
-* @}
-*/
-
-
-/** @defgroup USB_CORE_Private_TypesDefinitions
-* @{
-*/
-/**
-* @}
-*/
-
-
-
-/** @defgroup USB_CORE_Private_Macros
-* @{
-*/
-/**
-* @}
-*/
-
-
-/** @defgroup USB_CORE_Private_Variables
-* @{
-*/
-/**
-* @}
-*/
-
-
-/** @defgroup USB_CORE_Private_FunctionPrototypes
-* @{
-*/
-/**
-* @}
-*/
-
-
-/** @defgroup USB_CORE_Private_Functions
-* @{
-*/
 
 /**
 * @brief  USB_OTG_EnableCommonInt
@@ -2169,16 +2112,5 @@ void USB_OTG_SetEPStatus (USB_OTG_CORE_HANDLE *pdev , USB_OTG_EP *ep , uint32_t 
 }
 
 #endif
-/**
-* @}
-*/
-
-/**
-* @}
-*/
-
-/**
-* @}
-*/
 
 /******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/

@@ -19,73 +19,38 @@
   ******************************************************************************
   */
 
-/* Includes ------------------------------------------------------------------*/
 #include "usb_defines.h"
 #include "usb_regs.h"
 #include "usb_core.h"
 #include "usb_otg.h"
 
-/** @addtogroup USB_OTG_DRIVER
-  * @{
-  */
-
-/** @defgroup USB_OTG
-  * @brief This file is the interface between EFSL ans Host mass-storage class
-  * @{
-  */
-
-
-/** @defgroup USB_OTG_Private_Defines
-  * @{
-  */
-/**
-  * @}
-  */
-
-
-/** @defgroup USB_OTG_Private_TypesDefinitions
-  * @{
-  */
-/**
-  * @}
-  */
-
-
-
-/** @defgroup USB_OTG_Private_Macros
-  * @{
-  */
-/**
-  * @}
-  */
-
-
-/** @defgroup USB_OTG_Private_Variables
-  * @{
-  */
-/**
-  * @}
-  */
-
-
-/** @defgroup USB_OTG_Private_FunctionPrototypes
-  * @{
-  */
-
-static uint32_t USB_OTG_Read_itr(USB_OTG_CORE_HANDLE *pdev);
 
 /**
-  * @}
+  * @brief  USB_OTG_Read_itr
+  *         returns the Core Interrupt register
+  * @param  None
+  * @retval : status
   */
+static uint32_t USB_OTG_Read_itr(USB_OTG_CORE_HANDLE *pdev)
+{
+  USB_OTG_GINTSTS_TypeDef  gintsts;
+  USB_OTG_GINTMSK_TypeDef  gintmsk;
+  USB_OTG_GINTMSK_TypeDef  gintmsk_common;
 
 
-/** @defgroup USB_OTG_Private_Functions
-  * @{
-  */
+  gintsts.d32 = 0;
+  gintmsk.d32 = 0;
+  gintmsk_common.d32 = 0;
 
+  /* OTG interrupts */
+  gintmsk_common.b.sessreqintr = 1;
+  gintmsk_common.b.conidstschng = 1;
+  gintmsk_common.b.otgintr = 1;
 
-/*                           OTG Interrupt Handler                         */
-
+  gintsts.d32 = USB_OTG_READ_REG32(&pdev->regs.GREGS->GINTSTS);
+  gintmsk.d32 = USB_OTG_READ_REG32(&pdev->regs.GREGS->GINTMSK);
+  return ((gintsts.d32 & gintmsk.d32 ) & gintmsk_common.d32);
+}
 
 /**
   * @brief  STM32_USBO_OTG_ISR_Handler
@@ -118,58 +83,5 @@ uint32_t STM32_USBO_OTG_ISR_Handler(USB_OTG_CORE_HANDLE *pdev)
   }
   return retval;
 }
-
-
-/**
-  * @brief  USB_OTG_Read_itr
-  *         returns the Core Interrupt register
-  * @param  None
-  * @retval : status
-  */
-static uint32_t USB_OTG_Read_itr(USB_OTG_CORE_HANDLE *pdev)
-{
-  USB_OTG_GINTSTS_TypeDef  gintsts;
-  USB_OTG_GINTMSK_TypeDef  gintmsk;
-  USB_OTG_GINTMSK_TypeDef  gintmsk_common;
-
-
-  gintsts.d32 = 0;
-  gintmsk.d32 = 0;
-  gintmsk_common.d32 = 0;
-
-  /* OTG interrupts */
-  gintmsk_common.b.sessreqintr = 1;
-  gintmsk_common.b.conidstschng = 1;
-  gintmsk_common.b.otgintr = 1;
-
-  gintsts.d32 = USB_OTG_READ_REG32(&pdev->regs.GREGS->GINTSTS);
-  gintmsk.d32 = USB_OTG_READ_REG32(&pdev->regs.GREGS->GINTMSK);
-  return ((gintsts.d32 & gintmsk.d32 ) & gintmsk_common.d32);
-}
-
-
-/**
-  * @brief  USB_OTG_GetCurrentState
-  *         Return current OTG State
-  * @param  None
-  * @retval : None
-  */
-uint32_t USB_OTG_GetCurrentState (USB_OTG_CORE_HANDLE *pdev)
-{
-  return pdev->otg.OTG_State;
-}
-
-
-/**
-* @}
-*/
-
-/**
-* @}
-*/
-
-/**
-* @}
-*/
 
 /******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/

@@ -19,71 +19,11 @@
   ******************************************************************************
   */
 
-/* Includes ------------------------------------------------------------------*/
 #include "usb_dcd.h"
 #include "usb_bsp.h"
 
 
-/** @addtogroup USB_OTG_DRIVER
-* @{
-*/
-
-/** @defgroup USB_DCD
-* @brief This file is the interface between EFSL ans Host mass-storage class
-* @{
-*/
-
-
-/** @defgroup USB_DCD_Private_Defines
-* @{
-*/
-/**
-* @}
-*/
-
-
-/** @defgroup USB_DCD_Private_TypesDefinitions
-* @{
-*/
-/**
-* @}
-*/
-
-
-
-/** @defgroup USB_DCD_Private_Macros
-* @{
-*/
-/**
-* @}
-*/
-
-
-/** @defgroup USB_DCD_Private_Variables
-* @{
-*/
-/**
-* @}
-*/
-
-
-/** @defgroup USB_DCD_Private_FunctionPrototypes
-* @{
-*/
-
-/**
-* @}
-*/
-
-
-/** @defgroup USB_DCD_Private_Functions
-* @{
-*/
-
-
-
-void DCD_Init(USB_OTG_CORE_HANDLE *pdev ,
-              USB_OTG_CORE_ID_TypeDef coreID)
+void DCD_Init(USB_OTG_CORE_HANDLE *pdev, USB_OTG_CORE_ID_TypeDef coreID)
 {
   uint32_t i;
   USB_OTG_EP *ep;
@@ -146,10 +86,7 @@ void DCD_Init(USB_OTG_CORE_HANDLE *pdev ,
 * @param epdesc : Endpoint Descriptor
 * @retval : status
 */
-uint32_t DCD_EP_Open(USB_OTG_CORE_HANDLE *pdev ,
-                     uint8_t ep_addr,
-                     uint16_t ep_mps,
-                     uint8_t ep_type)
+uint32_t DCD_EP_Open(USB_OTG_CORE_HANDLE *pdev, uint8_t ep_addr, uint16_t ep_mps, uint8_t ep_type)
 {
   USB_OTG_EP *ep;
 
@@ -185,7 +122,7 @@ uint32_t DCD_EP_Open(USB_OTG_CORE_HANDLE *pdev ,
 * @param ep_addr: endpoint address
 * @retval : status
 */
-uint32_t DCD_EP_Close(USB_OTG_CORE_HANDLE *pdev , uint8_t  ep_addr)
+uint32_t DCD_EP_Close(USB_OTG_CORE_HANDLE *pdev , uint8_t ep_addr)
 {
   USB_OTG_EP *ep;
 
@@ -212,10 +149,7 @@ uint32_t DCD_EP_Close(USB_OTG_CORE_HANDLE *pdev , uint8_t  ep_addr)
 * @param buf_len: data length
 * @retval : status
 */
-uint32_t   DCD_EP_PrepareRx( USB_OTG_CORE_HANDLE *pdev,
-                            uint8_t   ep_addr,
-                            uint8_t *pbuf,
-                            uint16_t  buf_len)
+uint32_t DCD_EP_PrepareRx(USB_OTG_CORE_HANDLE *pdev, uint8_t ep_addr, uint8_t *pbuf, uint16_t buf_len)
 {
   USB_OTG_EP *ep;
 
@@ -252,10 +186,7 @@ uint32_t   DCD_EP_PrepareRx( USB_OTG_CORE_HANDLE *pdev,
 * @param buf_len: data length
 * @retval : status
 */
-uint32_t  DCD_EP_Tx ( USB_OTG_CORE_HANDLE *pdev,
-                     uint8_t   ep_addr,
-                     uint8_t   *pbuf,
-                     uint32_t   buf_len)
+uint32_t DCD_EP_Tx(USB_OTG_CORE_HANDLE *pdev, uint8_t ep_addr, uint8_t *pbuf, uint32_t buf_len)
 {
   USB_OTG_EP *ep;
 
@@ -287,7 +218,7 @@ uint32_t  DCD_EP_Tx ( USB_OTG_CORE_HANDLE *pdev,
 * @param epnum: endpoint address
 * @retval : status
 */
-uint32_t  DCD_EP_Stall (USB_OTG_CORE_HANDLE *pdev, uint8_t   epnum)
+uint32_t  DCD_EP_Stall (USB_OTG_CORE_HANDLE *pdev, uint8_t epnum)
 {
   USB_OTG_EP *ep;
   if ((0x80 & epnum) == 0x80)
@@ -455,17 +386,5 @@ void DCD_SetEPStatus (USB_OTG_CORE_HANDLE *pdev , uint8_t epnum , uint32_t Statu
 
    USB_OTG_SetEPStatus(pdev ,ep , Status);
 }
-
-/**
-* @}
-*/
-
-/**
-* @}
-*/
-
-/**
-* @}
-*/
 
 /******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/

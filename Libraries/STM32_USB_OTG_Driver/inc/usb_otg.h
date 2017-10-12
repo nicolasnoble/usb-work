@@ -19,76 +19,18 @@
   ******************************************************************************
   */
 
-/* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __USB_OTG__
 #define __USB_OTG__
-
-
-/** @addtogroup USB_OTG_DRIVER
-  * @{
-  */
-
-/** @defgroup USB_OTG
-  * @brief This file is the
-  * @{
-  */
-
-
-/** @defgroup USB_OTG_Exported_Defines
-  * @{
-  */
 
 
 void USB_OTG_InitiateSRP(void);
 void USB_OTG_InitiateHNP(uint8_t state , uint8_t mode);
 void USB_OTG_Switchback (USB_OTG_CORE_HANDLE *pdev);
-uint32_t  USB_OTG_GetCurrentState (USB_OTG_CORE_HANDLE *pdev);
 
 uint32_t STM32_USBO_OTG_ISR_Handler(USB_OTG_CORE_HANDLE *pdev);
-/**
-  * @}
-  */
 
 
-/** @defgroup USB_OTG_Exported_Types
-  * @{
-  */
-/**
-  * @}
-  */
+#endif
 
-
-/** @defgroup USB_OTG_Exported_Macros
-  * @{
-  */
-/**
-  * @}
-  */
-
-/** @defgroup USB_OTG_Exported_Variables
-  * @{
-  */
-/**
-  * @}
-  */
-
-/** @defgroup USB_OTG_Exported_FunctionsPrototype
-  * @{
-  */
-/**
-  * @}
-  */
-
-
-#endif //__USB_OTG__
-
-
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
 /******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
 

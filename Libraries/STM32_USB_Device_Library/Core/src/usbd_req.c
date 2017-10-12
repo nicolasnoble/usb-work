@@ -19,115 +19,32 @@
   ******************************************************************************
   */
 
-/* Includes ------------------------------------------------------------------*/
 #include "usbd_req.h"
 #include "usbd_ioreq.h"
 #include "usbd_desc.h"
 
 #include <string.h>
 
-/** @addtogroup STM32_USB_OTG_DEVICE_LIBRARY
-  * @{
-  */
 
-
-/** @defgroup USBD_REQ
-  * @brief USB standard requests module
-  * @{
-  */
-
-/** @defgroup USBD_REQ_Private_TypesDefinitions
-  * @{
-  */
-/**
-  * @}
-  */
-
-
-/** @defgroup USBD_REQ_Private_Defines
-  * @{
-  */
-
-/**
-  * @}
-  */
-
-
-/** @defgroup USBD_REQ_Private_Macros
-  * @{
-  */
-/**
-  * @}
-  */
-
-
-/** @defgroup USBD_REQ_Private_Variables
-  * @{
-  */
-
-#ifdef USB_OTG_HS_INTERNAL_DMA_ENABLED
-  #if defined ( __ICCARM__ ) /*!< IAR Compiler */
-    #pragma data_alignment=4
-  #endif
-#endif /* USB_OTG_HS_INTERNAL_DMA_ENABLED */
 __ALIGN_BEGIN uint32_t USBD_ep_status __ALIGN_END  = 0;
-
-#ifdef USB_OTG_HS_INTERNAL_DMA_ENABLED
-  #if defined ( __ICCARM__ ) /*!< IAR Compiler */
-    #pragma data_alignment=4
-  #endif
-#endif /* USB_OTG_HS_INTERNAL_DMA_ENABLED */
 __ALIGN_BEGIN uint32_t  USBD_default_cfg __ALIGN_END  = 0;
-
-#ifdef USB_OTG_HS_INTERNAL_DMA_ENABLED
-  #if defined ( __ICCARM__ ) /*!< IAR Compiler */
-    #pragma data_alignment=4
-  #endif
-#endif /* USB_OTG_HS_INTERNAL_DMA_ENABLED */
 __ALIGN_BEGIN uint32_t  USBD_cfg_status __ALIGN_END  = 0;
-
-#ifdef USB_OTG_HS_INTERNAL_DMA_ENABLED
-  #if defined ( __ICCARM__ ) /*!< IAR Compiler */
-    #pragma data_alignment=4
-  #endif
-#endif /* USB_OTG_HS_INTERNAL_DMA_ENABLED */
 __ALIGN_BEGIN uint8_t USBD_StrDesc[USB_MAX_STR_DESC_SIZ] __ALIGN_END ;
-/**
-  * @}
-  */
 
 
-/** @defgroup USBD_REQ_Private_FunctionPrototypes
-  * @{
-  */
-static void USBD_GetDescriptor(USB_OTG_CORE_HANDLE  *pdev,
-                               USB_SETUP_REQ *req);
+static void USBD_GetDescriptor(USB_OTG_CORE_HANDLE  *pdev, USB_SETUP_REQ *req);
 
-static void USBD_SetAddress(USB_OTG_CORE_HANDLE  *pdev,
-                            USB_SETUP_REQ *req);
+static void USBD_SetAddress(USB_OTG_CORE_HANDLE  *pdev, USB_SETUP_REQ *req);
 
-static void USBD_SetConfig(USB_OTG_CORE_HANDLE  *pdev,
-                           USB_SETUP_REQ *req);
+static void USBD_SetConfig(USB_OTG_CORE_HANDLE  *pdev, USB_SETUP_REQ *req);
 
-static void USBD_GetConfig(USB_OTG_CORE_HANDLE  *pdev,
-                           USB_SETUP_REQ *req);
+static void USBD_GetConfig(USB_OTG_CORE_HANDLE  *pdev, USB_SETUP_REQ *req);
 
-static void USBD_GetStatus(USB_OTG_CORE_HANDLE  *pdev,
-                           USB_SETUP_REQ *req);
+static void USBD_GetStatus(USB_OTG_CORE_HANDLE  *pdev, USB_SETUP_REQ *req);
 
-static void USBD_SetFeature(USB_OTG_CORE_HANDLE  *pdev,
-                            USB_SETUP_REQ *req);
+static void USBD_SetFeature(USB_OTG_CORE_HANDLE  *pdev, USB_SETUP_REQ *req);
 
-static void USBD_ClrFeature(USB_OTG_CORE_HANDLE  *pdev,
-                            USB_SETUP_REQ *req);
-/**
-  * @}
-  */
-
-
-/** @defgroup USBD_REQ_Private_Functions
-  * @{
-  */
+static void USBD_ClrFeature(USB_OTG_CORE_HANDLE  *pdev, USB_SETUP_REQ *req);
 
 
 /**
@@ -719,18 +636,5 @@ void USBD_CtlError( USB_OTG_CORE_HANDLE  *pdev,
   USB_OTG_EP0_OutStart(pdev);
 }
 
-/**
-  * @}
-  */
-
-
-/**
-  * @}
-  */
-
-
-/**
-  * @}
-  */
 
 /******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
