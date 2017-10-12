@@ -467,7 +467,10 @@ static void USBD_SetConfig(USB_OTG_CORE_HANDLE  *pdev,
         {
           pdev->dev.device_config = cfgidx;
           pdev->dev.device_status = USB_OTG_CONFIGURED;
-          USBD_SetCfg(pdev , cfgidx);
+          /* Open EP IN */
+          DCD_EP_Open(pdev, HID_IN_EP, HID_IN_PACKET, USB_OTG_EP_INT);
+          /* Open EP OUT */
+          DCD_EP_Open(pdev, HID_OUT_EP, HID_OUT_PACKET, USB_OTG_EP_INT);
           USBD_CtlSendStatus(pdev);
         }
         else
@@ -481,18 +484,26 @@ static void USBD_SetConfig(USB_OTG_CORE_HANDLE  *pdev,
         {
           pdev->dev.device_status = USB_OTG_ADDRESSED;
           pdev->dev.device_config = cfgidx;
-          USBD_ClrCfg(pdev , cfgidx);
+          /* Close HID EPs */
+          DCD_EP_Close (pdev , HID_IN_EP);
+          DCD_EP_Close (pdev , HID_OUT_EP);
+
           USBD_CtlSendStatus(pdev);
 
         }
         else if (cfgidx != pdev->dev.device_config)
         {
           /* Clear old configuration */
-          USBD_ClrCfg(pdev , pdev->dev.device_config);
+          /* Close HID EPs */
+          DCD_EP_Close (pdev , HID_IN_EP);
+          DCD_EP_Close (pdev , HID_OUT_EP);
 
           /* set new configuration */
           pdev->dev.device_config = cfgidx;
-          USBD_SetCfg(pdev , cfgidx);
+          /* Open EP IN */
+          DCD_EP_Open(pdev, HID_IN_EP, HID_IN_PACKET, USB_OTG_EP_INT);
+          /* Open EP OUT */
+          DCD_EP_Open(pdev, HID_OUT_EP, HID_OUT_PACKET, USB_OTG_EP_INT);
           USBD_CtlSendStatus(pdev);
         }
         else

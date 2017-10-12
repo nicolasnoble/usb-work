@@ -219,7 +219,6 @@ uint32_t USBD_OTG_ISR_Handler(USB_OTG_CORE_HANDLE *pdev) {
 */
 static uint32_t DCD_SessionRequest_ISR(USB_OTG_CORE_HANDLE *pdev) {
     USB_OTG_GINTSTS_TypeDef gintsts;
-    USBD_DCD_INT_fops->DevConnected(pdev);
 
     /* Clear interrupt */
     gintsts.d32 = 0;
@@ -241,7 +240,9 @@ static uint32_t DCD_OTG_ISR(USB_OTG_CORE_HANDLE *pdev) {
     gotgint.d32 = USB_OTG_READ_REG32(&pdev->regs.GREGS->GOTGINT);
 
     if (gotgint.b.sesenddet) {
-        USBD_DCD_INT_fops->DevDisconnected(pdev);
+        DCD_EP_Close (pdev , HID_IN_EP);
+        DCD_EP_Close (pdev , HID_OUT_EP);
+        USBD_ClrCfg(pdev, 0);
     }
     /* Clear OTG interrupt */
     USB_OTG_WRITE_REG32(&pdev->regs.GREGS->GOTGINT, gotgint.d32);
@@ -688,7 +689,8 @@ static uint32_t DCD_IsoINIncomplete_ISR(USB_OTG_CORE_HANDLE *pdev) {
 
     gintsts.d32 = 0;
 
-    USBD_DCD_INT_fops->IsoINIncomplete(pdev);
+    if (pdev->dev.class_cb->IsoINIncomplete)
+      pdev->dev.class_cb->IsoINIncomplete(pdev);
 
     /* Clear interrupt */
     gintsts.b.incomplisoin = 1;

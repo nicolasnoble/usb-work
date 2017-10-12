@@ -28,17 +28,6 @@
 static uint8_t USBD_SetupStage(USB_OTG_CORE_HANDLE *pdev);
 static uint8_t USBD_DataOutStage(USB_OTG_CORE_HANDLE *pdev , uint8_t epnum);
 static uint8_t USBD_DataInStage(USB_OTG_CORE_HANDLE *pdev , uint8_t epnum);
-static uint8_t USBD_SOF(USB_OTG_CORE_HANDLE  *pdev);
-static uint8_t USBD_Reset(USB_OTG_CORE_HANDLE  *pdev);
-static uint8_t USBD_Suspend(USB_OTG_CORE_HANDLE  *pdev);
-static uint8_t USBD_Resume(USB_OTG_CORE_HANDLE  *pdev);
-#ifdef VBUS_SENSING_ENABLED
-static uint8_t USBD_DevConnected(USB_OTG_CORE_HANDLE  *pdev);
-static uint8_t USBD_DevDisconnected(USB_OTG_CORE_HANDLE  *pdev);
-#endif
-static uint8_t USBD_IsoINIncomplete(USB_OTG_CORE_HANDLE  *pdev);
-static uint8_t USBD_IsoOUTIncomplete(USB_OTG_CORE_HANDLE  *pdev);
-
 
 USBD_DCD_INT_cb_TypeDef USBD_DCD_INT_cb =
 {
@@ -49,11 +38,11 @@ USBD_DCD_INT_cb_TypeDef USBD_DCD_INT_cb =
   NULL,//USBD_Reset,
   NULL,//USBD_Suspend,
   NULL,//USBD_Resume,
-  USBD_IsoINIncomplete,
-  USBD_IsoOUTIncomplete,
+  NULL,//USBD_IsoINIncomplete,
+  NULL,//USBD_IsoOUTIncomplete,
 #ifdef VBUS_SENSING_ENABLED
-USBD_DevConnected,
-USBD_DevDisconnected,
+NULL,//USBD_DevConnected,
+NULL,//USBD_DevDisconnected,
 #endif
 };
 
@@ -179,56 +168,6 @@ static uint8_t USBD_DataInStage(USB_OTG_CORE_HANDLE *pdev , uint8_t epnum)
   }
   return USBD_OK;
 }
-
-
-USBD_Status USBD_SetCfg(USB_OTG_CORE_HANDLE  *pdev, uint8_t cfgidx)
-{
-  /* Open EP IN */
-  DCD_EP_Open(pdev, HID_IN_EP, HID_IN_PACKET, USB_OTG_EP_INT);
-
-  /* Open EP OUT */
-  DCD_EP_Open(pdev, HID_OUT_EP, HID_OUT_PACKET, USB_OTG_EP_INT);
-  return USBD_OK;
-}
-
-
-USBD_Status USBD_ClrCfg(USB_OTG_CORE_HANDLE  *pdev, uint8_t cfgidx)
-{
-  /* Close HID EPs */
-  DCD_EP_Close (pdev , HID_IN_EP);
-  DCD_EP_Close (pdev , HID_OUT_EP);
-  return USBD_OK;
-}
-
-
-static uint8_t USBD_IsoINIncomplete(USB_OTG_CORE_HANDLE  *pdev)
-{
-  pdev->dev.class_cb->IsoINIncomplete(pdev);
-  return USBD_OK;
-}
-
-
-static uint8_t USBD_IsoOUTIncomplete(USB_OTG_CORE_HANDLE  *pdev)
-{
-  pdev->dev.class_cb->IsoOUTIncomplete(pdev);
-  return USBD_OK;
-}
-
-#ifdef VBUS_SENSING_ENABLED
-
-
-static uint8_t USBD_DevConnected(USB_OTG_CORE_HANDLE  *pdev)
-{
-  return USBD_OK;
-}
-
-
-static uint8_t USBD_DevDisconnected(USB_OTG_CORE_HANDLE  *pdev)
-{
-  pdev->dev.class_cb->DeInit(pdev, 0);
-  return USBD_ClrCfg(pdev, 0);
-}
-#endif
 
 
 /******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
