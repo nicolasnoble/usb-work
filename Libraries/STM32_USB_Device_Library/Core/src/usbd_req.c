@@ -325,9 +325,7 @@ USBD_Status  USBD_StdEPReq (USB_OTG_CORE_HANDLE  *pdev, USB_SETUP_REQ  *req)
               USBD_ep_status = 0x0000;
             }
           }
-          USBD_CtlSendData (pdev,
-                            (uint8_t *)&USBD_ep_status,
-                            2);
+          USBD_CtlSendData (pdev, (uint8_t *)&USBD_ep_status, 2);
           break;
 
         default:

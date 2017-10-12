@@ -115,11 +115,6 @@ __ALIGN_BEGIN static uint8_t USBD_HID_CfgDesc[USB_HID_CONFIG_DESC_SIZ] __ALIGN_E
 } ;
 #endif
 
-#ifdef USB_OTG_HS_INTERNAL_DMA_ENABLED
-  #if defined ( __ICCARM__ ) /*!< IAR Compiler */
-    #pragma data_alignment=4
-  #endif
-#endif /* USB_OTG_HS_INTERNAL_DMA_ENABLED */
 __ALIGN_BEGIN static uint8_t HID_MOUSE_ReportDesc[HID_MOUSE_REPORT_DESC_SIZE] __ALIGN_END =
 {
   0x05, 0x01,        // Usage Page (Generic Desktop Ctrls)
@@ -161,6 +156,10 @@ __ALIGN_BEGIN static uint8_t HID_MOUSE_ReportDesc[HID_MOUSE_REPORT_DESC_SIZE] __
   0xB1, 0x01,        //   Feature (Const,Array,Abs,No Wrap,Linear,Preferred State,No Null Position,Non-volatile)
   0xC0,              // End Collection
 };
+
+__ALIGN_BEGIN static uint32_t  USBD_HID_Protocol  __ALIGN_END = 0;
+__ALIGN_BEGIN static uint32_t  USBD_HID_IdleState __ALIGN_END = 0;
+__ALIGN_BEGIN static uint32_t  USBD_HID_AltSet  __ALIGN_END = 0;
 
 const uint8_t * get_USB_interface_descriptor(int configuration, int interface);
 
@@ -215,7 +214,7 @@ static uint8_t  USBD_HID_Setup (void  *pdev,
       }
       else if( req->wValue >> 8 == HID_DESCRIPTOR_TYPE)
       {
-        pbuf = get_USB_interface_descriptor(0,0);//USBD_HID_CfgDesc + 0x12;
+        pbuf = get_USB_first_interface_descriptor(0);//USBD_HID_CfgDesc + 0x12;
         len = MIN(USB_HID_DESC_SIZ , req->wLength);
       }
 

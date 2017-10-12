@@ -274,7 +274,7 @@ static uint32_t DCD_HandleResume_ISR(USB_OTG_CORE_HANDLE *pdev) {
     USB_OTG_MODIFY_REG32(&pdev->regs.DREGS->DCTL, devctl.d32, 0);
 
     /* Inform upper layer by the Resume Event */
-    USBD_DCD_INT_fops->Resume(pdev);
+    pdev->dev.device_status = USB_OTG_CONFIGURED;
 
     /* Clear interrupt */
     gintsts.d32 = 0;
@@ -294,7 +294,7 @@ static uint32_t DCD_HandleUSBSuspend_ISR(USB_OTG_CORE_HANDLE *pdev) {
     USB_OTG_PCGCCTL_TypeDef power;
     USB_OTG_DSTS_TypeDef dsts;
 
-    USBD_DCD_INT_fops->Suspend(pdev);
+    pdev->dev.device_status  = USB_OTG_SUSPENDED;
 
     dsts.d32 = USB_OTG_READ_REG32(&pdev->regs.DREGS->DSTS);
 
@@ -455,7 +455,11 @@ static uint32_t DCD_HandleOutEP_ISR(USB_OTG_CORE_HANDLE *pdev) {
 static uint32_t DCD_HandleSof_ISR(USB_OTG_CORE_HANDLE *pdev) {
     USB_OTG_GINTSTS_TypeDef GINTSTS;
 
-    USBD_DCD_INT_fops->SOF(pdev);
+    if(pdev->dev.class_cb->SOF)
+    {
+      pdev->dev.class_cb->SOF(pdev);
+    }
+
 
     /* Clear interrupt */
     GINTSTS.d32 = 0;
@@ -630,7 +634,11 @@ static uint32_t DCD_HandleUsbReset_ISR(USB_OTG_CORE_HANDLE *pdev) {
     USB_OTG_WRITE_REG32(&pdev->regs.GREGS->GINTSTS, gintsts.d32);
 
     /*Reset internal state machine */
-    USBD_DCD_INT_fops->Reset(pdev);
+    /* Open EP0 OUT */
+    DCD_EP_Open(pdev, 0x00, USB_OTG_MAX_EP0_SIZE, EP_TYPE_CTRL);
+    /* Open EP0 IN */
+    DCD_EP_Open(pdev, 0x80, USB_OTG_MAX_EP0_SIZE, EP_TYPE_CTRL);
+    pdev->dev.device_status = USB_OTG_DEFAULT;
     return 1;
 }
 
