@@ -113,6 +113,43 @@ struct pack16 {
   * to explain this code. There are some fairly good references on the Internet
   * describing how tuples work internally, by creating a sequence in order to
   * be able to create unique types.
+  *
+  * The high level classes this creates are:
+  *
+  *   template<size_t N> make_index_sequence
+  *
+  * This creates the type make_index_sequence::type which is going to be
+  * a index_sequence<0, 1, 2, ..., N>, which can then be unpacked into
+  * index_sequence<indices...> to get a vararg of indices.
+  *
+  *   template<basetype, type1, type2, ...> typed_tuple
+  *
+  * This creates a tuple that has the constraint that every type needs to
+  * derive from basetype.
+  *
+  *   template<basetype, type1, type2, ...> typed_indexed_tuple
+  *
+  * Same as above, but every instanciated type will be constructed with
+  * its index as its argument, instead of no argument.
+  *
+  * They both provide the ::offsets type that can be cast into an array of
+  * const ptrdiff_t the following way:
+  *
+  *   typename tuple_type<...>::offsets m_offsets_list;
+  *   const ptrdiff_t * m_offsets_array = reinterpret_cast<const ptrdiff_t *>(&m_offsets_list);
+  *
+  * They also offer the ::find<type>() method, that returns the index of the
+  * given type into the tuple. This then can be used into the offset array.
+  *
+  * And finally we have the following tuple:
+  *
+  *   template<basetype, outer_type1, outer_type2, ...> embedded_tuple
+  *   template<inner_type1, inner_type2, ...> inner_tuple
+  *
+  * These two work in tandem. The outer_types need to be of inner_tuple<>,
+  * and all of the inner_types need to be derived from basetype. This type
+  * exists to allow for tuples of tuples, while preserving typechecking sanity.
+  *
   */
 template<size_t... indices>
 struct index_sequence {
