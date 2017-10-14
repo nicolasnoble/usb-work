@@ -19,16 +19,10 @@
   ******************************************************************************
   */
 
-/* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __USBD_CDC_IF_TEMPLATE_H
 #define __USBD_CDC_IF_TEMPLATE_H
 
-/* Includes ------------------------------------------------------------------*/
-#ifdef STM32F2XX
- #include "stm32f2xx.h"
-#elif defined(STM32F10X_CL)
- #include "stm32f10x.h"
-#endif /* STM32F2XX */
+#include "stm32f4xx.h"
 
 #include "usbd_conf.h"
 #include "usbd_cdc_core.h"

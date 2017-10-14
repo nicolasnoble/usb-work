@@ -506,7 +506,7 @@ struct InterfaceClass : InterfaceClassBase {
     uint8_t m_value = value;
 } USB_PACKED;
 struct InterfaceClass_AUDIO : InterfaceClass<0x01> { } USB_PACKED;
-struct InterfaceClass_COMM_CDCCTRL : InterfaceClass<0x02> { } USB_PACKED;
+struct InterfaceClass_CDC : InterfaceClass<0x02> { } USB_PACKED;
 struct InterfaceClass_HID : InterfaceClass<0x03> { } USB_PACKED;
 struct InterfaceClass_PHYSICAL : InterfaceClass<0x05> { } USB_PACKED;
 struct InterfaceClass_IMAGE : InterfaceClass<0x06> { } USB_PACKED;
@@ -816,6 +816,82 @@ struct DeviceDescriptor {
 /*
 struct DeviceReleaseNumber : DeviceReleaseNumberBase, usb_template_helpers::pack16<value> { } USB_PACKED;
 */
+    namespace CDC {
+    struct FunctionalDescriptorTypeBase { } USB_PACKED;
+    template<uint8_t value>
+    struct FunctionalDescriptorType : FunctionalDescriptorTypeBase {
+        uint8_t m_value = value;
+    } USB_PACKED;
+    struct FunctionalDescriptorType_CS_Interface : FunctionalDescriptorType<0x24> { } USB_PACKED;
+    struct FunctionalDescriptorType_CS_Endpoint : FunctionalDescriptorType<0x25> { } USB_PACKED;
+
+    struct FunctionalDescriptorSubTypeBase { } USB_PACKED;
+    template<uint8_t value>
+    struct FunctionalDescriptorSubType : FunctionalDescriptorSubTypeBase {
+        uint8_t m_value = value;
+    } USB_PACKED;
+    struct FunctionalDescriptorSubType_Header : FunctionalDescriptorSubType<0x00> { } USB_PACKED;
+    struct FunctionalDescriptorSubType_Call : FunctionalDescriptorSubType<0x01> { } USB_PACKED;
+    struct FunctionalDescriptorSubType_ACM : FunctionalDescriptorSubType<0x02> { } USB_PACKED;
+    struct FunctionalDescriptorSubType_DLM : FunctionalDescriptorSubType<0x03> { } USB_PACKED;
+    struct FunctionalDescriptorSubType_Telephone_Ringer : FunctionalDescriptorSubType<0x04> { } USB_PACKED;
+    struct FunctionalDescriptorSubType_Telephone_Call : FunctionalDescriptorSubType<0x05> { } USB_PACKED;
+    struct FunctionalDescriptorSubType_Union : FunctionalDescriptorSubType<0x06> { } USB_PACKED;
+    struct FunctionalDescriptorSubType_Country_Select : FunctionalDescriptorSubType<0x07> { } USB_PACKED;
+    struct FunctionalDescriptorSubType_Telephone_Operational : FunctionalDescriptorSubType<0x08> { } USB_PACKED;
+    struct FunctionalDescriptorSubType_USB_Terminal : FunctionalDescriptorSubType<0x09> { } USB_PACKED;
+    struct FunctionalDescriptorSubType_Network_Channel : FunctionalDescriptorSubType<0x0a> { } USB_PACKED;
+    struct FunctionalDescriptorSubType_Protocol_Unit : FunctionalDescriptorSubType<0x0b> { } USB_PACKED;
+    struct FunctionalDescriptorSubType_Extension_Unit : FunctionalDescriptorSubType<0x0c> { } USB_PACKED;
+    struct FunctionalDescriptorSubType_Multi_Channel : FunctionalDescriptorSubType<0x0d> { } USB_PACKED;
+    struct FunctionalDescriptorSubType_CAPI : FunctionalDescriptorSubType<0x0e> { } USB_PACKED;
+    struct FunctionalDescriptorSubType_Ethernet : FunctionalDescriptorSubType<0x0f> { } USB_PACKED;
+    struct FunctionalDescriptorSubType_ATM : FunctionalDescriptorSubType<0x10> { } USB_PACKED;
+    struct FunctionalDescriptorSubType_Wireless_Handset : FunctionalDescriptorSubType<0x11> { } USB_PACKED;
+    struct FunctionalDescriptorSubType_Mobile_Direct : FunctionalDescriptorSubType<0x12> { } USB_PACKED;
+    struct FunctionalDescriptorSubType_MDLM : FunctionalDescriptorSubType<0x13> { } USB_PACKED;
+    struct FunctionalDescriptorSubType_Device : FunctionalDescriptorSubType<0x14> { } USB_PACKED;
+    struct FunctionalDescriptorSubType_OBEX : FunctionalDescriptorSubType<0x15> { } USB_PACKED;
+    struct FunctionalDescriptorSubType_Command_Set : FunctionalDescriptorSubType<0x16> { } USB_PACKED;
+    struct FunctionalDescriptorSubType_Command_Set_Detail : FunctionalDescriptorSubType<0x17> { } USB_PACKED;
+    struct FunctionalDescriptorSubType_Telephone_Control : FunctionalDescriptorSubType<0x18> { } USB_PACKED;
+    struct FunctionalDescriptorSubType_OBEX_Service : FunctionalDescriptorSubType<0x19> { } USB_PACKED;
+    struct FunctionalDescriptorSubType_NCM : FunctionalDescriptorSubType<0x1a> { } USB_PACKED;
+
+    struct FunctionSpecificDataBase { } USB_PACKED;
+    template<uint8_t value>
+    struct FunctionSpecificData : FunctionSpecificDataBase {
+        constexpr FunctionSpecificData(size_t index) {
+            static_assert(std::is_base_of<FunctionSpecificDataBase, FunctionSpecificData>::value, "Wrong ReportDescriptorIndex type");
+        }
+        uint8_t m_value = value;
+    } USB_PACKED;
+
+    struct FunctionSpecificDataListBase { } USB_PACKED;
+    template<typename... types>
+    struct FunctionSpecificDataList
+        : FunctionSpecificDataListBase
+        , usb_template_helpers::typed_indexed_tuple<FunctionSpecificDataBase, types...> {
+        static constexpr size_t bNumReports = sizeof...(types);
+    } USB_PACKED;
+
+    template <
+      typename FunctionalDescriptorType,
+      typename FunctionalDescriptorSubType,
+      typename FunctionSpecificDataList
+    >
+    struct FunctionalDescriptor : USB::OptionalDescriptorBase {
+        constexpr FunctionalDescriptor() {
+          static_assert(std::is_base_of<FunctionalDescriptorTypeBase, FunctionalDescriptorType>::value, "Wrong FunctionalDescriptorType type");
+          static_assert(std::is_base_of<FunctionalDescriptorSubTypeBase, FunctionalDescriptorSubType>::value, "Wrong FunctionalDescriptorSubType type");
+          static_assert(std::is_base_of<FunctionSpecificDataListBase, FunctionSpecificDataList>::value, "Wrong FunctionSpecificDataList type");
+        }
+        uint8_t m_bFunctionLength = 3 + sizeof(FunctionSpecificDataList);
+        FunctionalDescriptorType m_bDescriptorType;
+        FunctionalDescriptorSubType m_bDescriptorSubType;
+        FunctionSpecificDataList m_reportDescriptorIndexList;
+    } USB_PACKED;
+    } //namespace CDC
     namespace HID {
     struct ReportDescriptorIndexBase { } USB_PACKED;
     template <
@@ -895,7 +971,6 @@ struct DeviceReleaseNumber : DeviceReleaseNumberBase, usb_template_helpers::pack
         uint8_t m_NumDescriptors = sizeof(ReportDescriptorIndexList) / 3;
         ReportDescriptorIndexList m_reportDescriptorIndexList;
     } USB_PACKED;
-
     } //namespace HID
 } // namespace USB
 
