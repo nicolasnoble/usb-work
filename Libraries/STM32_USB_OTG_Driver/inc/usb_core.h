@@ -19,29 +19,12 @@
   ******************************************************************************
   */
 
-/* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __USB_CORE_H__
 #define __USB_CORE_H__
 
-/* Includes ------------------------------------------------------------------*/
 #include "usb_conf.h"
 #include "usb_regs.h"
 #include "usb_defines.h"
-
-
-/** @addtogroup USB_OTG_DRIVER
-  * @{
-  */
-
-/** @defgroup USB_CORE
-  * @brief usb otg driver core layer
-  * @{
-  */
-
-
-/** @defgroup USB_CORE_Exported_Defines
-  * @{
-  */
 
 #define USB_OTG_EP0_IDLE                          0
 #define USB_OTG_EP0_SETUP                         1
@@ -60,15 +43,8 @@
 #define USB_OTG_EP_RX_STALL     0x1000
 #define USB_OTG_EP_RX_NAK       0x2000
 #define USB_OTG_EP_RX_VALID     0x3000
-/**
-  * @}
-  */
+
 #define   MAX_DATA_LENGTH                        0xFF
-
-/** @defgroup USB_CORE_Exported_Types
-  * @{
-  */
-
 
 typedef enum {
   USB_OTG_OK = 0,
@@ -288,31 +264,6 @@ typedef struct USB_OTG_handle
 #endif
 } USB_OTG_CORE_HANDLE , *PUSB_OTG_CORE_HANDLE;
 
-/**
-  * @}
-  */
-
-
-/** @defgroup USB_CORE_Exported_Macros
-  * @{
-  */
-
-/**
-  * @}
-  */
-
-/** @defgroup USB_CORE_Exported_Variables
-  * @{
-  */
-/**
-  * @}
-  */
-
-/** @defgroup USB_CORE_Exported_FunctionsPrototype
-  * @{
-  */
-
-
 USB_OTG_STS  USB_OTG_CoreInit        (USB_OTG_CORE_HANDLE *pdev);
 USB_OTG_STS  USB_OTG_SelectCore      (USB_OTG_CORE_HANDLE *pdev,
                                       USB_OTG_CORE_ID_TypeDef coreID);
@@ -378,19 +329,8 @@ void         USB_OTG_StopDevice(USB_OTG_CORE_HANDLE *pdev);
 void         USB_OTG_SetEPStatus (USB_OTG_CORE_HANDLE *pdev , USB_OTG_EP *ep , uint32_t Status);
 uint32_t     USB_OTG_GetEPStatus(USB_OTG_CORE_HANDLE *pdev ,USB_OTG_EP *ep);
 #endif
-/**
-  * @}
-  */
 
-#endif  /* __USB_CORE_H__ */
+#endif
 
-
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
 /******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
 

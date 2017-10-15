@@ -19,44 +19,10 @@
   ******************************************************************************
   */
 
-/* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __HCD_INT_H__
 #define __HCD_INT_H__
 
-
-/* Includes ------------------------------------------------------------------*/
 #include "usb_hcd.h"
-
-
-/** @addtogroup USB_OTG_DRIVER
-  * @{
-  */
-
-/** @defgroup USB_HCD_INT
-  * @brief This file is the
-  * @{
-  */
-
-
-/** @defgroup USB_HCD_INT_Exported_Defines
-  * @{
-  */
-/**
-  * @}
-  */
-
-
-/** @defgroup USB_HCD_INT_Exported_Types
-  * @{
-  */
-/**
-  * @}
-  */
-
-
-/** @defgroup USB_HCD_INT_Exported_Macros
-  * @{
-  */
 
 #define CLEAR_HC_INT(HC_REGS, intr) \
   {\
@@ -86,41 +52,12 @@
     GINTMSK.b.ack = 1; \
     USB_OTG_WRITE_REG32(&pdev->regs.HC_REGS[hc_num]->HCGINTMSK, GINTMSK.d32);}
 
-/**
-  * @}
-  */
-
-/** @defgroup USB_HCD_INT_Exported_Variables
-  * @{
-  */
-/**
-  * @}
-  */
-
-/** @defgroup USB_HCD_INT_Exported_FunctionsPrototype
-  * @{
-  */
-/* Callbacks handler */
 void ConnectCallback_Handler(USB_OTG_CORE_HANDLE *pdev);
 void Disconnect_Callback_Handler(USB_OTG_CORE_HANDLE *pdev);
 void Overcurrent_Callback_Handler(USB_OTG_CORE_HANDLE *pdev);
 uint32_t USBH_OTG_ISR_Handler (USB_OTG_CORE_HANDLE *pdev);
 
-/**
-  * @}
-  */
+#endif
 
-
-
-#endif //__HCD_INT_H__
-
-
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
 /******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
 
