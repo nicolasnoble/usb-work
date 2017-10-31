@@ -4,6 +4,7 @@
 
 //#include "usbd_hid_core.h"
 #include  "usbd_ioreq.h"
+#include  "usb_dcd_int.h"
 
 #include <gpio.h>
 #include <irq.h>
@@ -12,8 +13,6 @@
 //#define USEWAKEUP
 
 __ALIGN_BEGIN USB_OTG_CORE_HANDLE  USB_OTG_dev __ALIGN_END;
-extern uint32_t USBD_OTG_ISR_Handler (USB_OTG_CORE_HANDLE *pdev);
-//extern USBD_Class_cb_TypeDef  USBD_HID_cb;
 
 void USB_OTG_BSP_uDelay (const uint32_t usec)
 {
@@ -47,7 +46,7 @@ static void usbwakeuphandler()
 
 static void usbhandler()
 {
-  USBD_OTG_ISR_Handler (&USB_OTG_dev);
+  USBD_OTG_ISR_Handler(&USB_OTG_dev);
 }
 
 void usb_fs_device_init()
@@ -65,11 +64,6 @@ void usb_fs_device_init()
 
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
   RCC_AHB2PeriphClockCmd(RCC_AHB2Periph_OTG_FS, ENABLE) ;
-
-  //set callbacks
-  USB_OTG_dev.dev.class_cb = NULL;//&USBD_HID_cb;
-  USB_OTG_dev.dev.usr_cb = NULL;
-  USB_OTG_dev.dev.usr_device = NULL;
 
   set_irq_handler(OTG_FS_IRQ_handler, &usbhandler);
   #ifdef USEWAKUP
@@ -93,6 +87,6 @@ void usb_fs_device_init()
 void usb_send_report(uint8_t *buffer, uint16_t nb)
 {
   if (USB_OTG_dev.dev.device_status == USB_OTG_CONFIGURED )
-    DCD_EP_Tx (&USB_OTG_dev, HID_IN_EP, buffer, nb);
+    DCD_EP_Tx(&USB_OTG_dev, HID_IN_EP, buffer, nb);
 }
 

@@ -34,7 +34,7 @@
   doepint.b.intr = 1; \
   USB_OTG_WRITE_REG32(&pdev->regs.OUTEP_REGS[epnum]->DOEPINT,doepint.d32);
 
-uint32_t USBD_OTG_ISR_Handler (USB_OTG_CORE_HANDLE *pdev);
+void USBD_OTG_ISR_Handler (USB_OTG_CORE_HANDLE *pdev);
 
 #endif
 
