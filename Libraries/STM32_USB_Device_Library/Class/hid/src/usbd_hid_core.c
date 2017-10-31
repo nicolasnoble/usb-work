@@ -167,67 +167,66 @@ const uint8_t * get_USB_interface_descriptor(int configuration, int interface);
   * @param  req: usb requests
   * @retval status
   */
-uint8_t  USBD_HID_Setup (void  *pdev, USB_SETUP_REQ *req)
+void USBD_HID_Setup (void  *pdev, USB_SETUP_REQ *req)
 {
   uint16_t len = 0;
   uint8_t  *pbuf = NULL;
 
   switch (req->bmRequest & USB_REQ_TYPE_MASK)
   {
-  case USB_REQ_TYPE_CLASS :
-    switch (req->bRequest)
-    {
-    case HID_REQ_SET_PROTOCOL:
-      USBD_HID_Protocol = (uint8_t)(req->wValue);
-      break;
-
-    case HID_REQ_GET_PROTOCOL:
-      USBD_CtlSendData (pdev, (uint8_t *)&USBD_HID_Protocol, 1);
-      break;
-
-    case HID_REQ_SET_IDLE:
-      USBD_HID_IdleState = (uint8_t)(req->wValue >> 8);
-      break;
-
-    case HID_REQ_GET_IDLE:
-      USBD_CtlSendData (pdev, (uint8_t *)&USBD_HID_IdleState, 1);
-      break;
-
-    default:
-      USBD_CtlError (pdev, req);
-      return USBD_FAIL;
-    }
-    break;
-
-  case USB_REQ_TYPE_STANDARD:
-    switch (req->bRequest)
-    {
-    case USB_REQ_GET_DESCRIPTOR:
-      if( req->wValue >> 8 == HID_REPORT_DESC)
+    case USB_REQ_TYPE_CLASS :
+      switch (req->bRequest)
       {
-        len = MIN(HID_MOUSE_REPORT_DESC_SIZE , req->wLength);
-        pbuf = HID_MOUSE_ReportDesc;
+      case HID_REQ_SET_PROTOCOL:
+        USBD_HID_Protocol = (uint8_t)(req->wValue);
+        break;
+
+      case HID_REQ_GET_PROTOCOL:
+        USBD_CtlSendData (pdev, (uint8_t *)&USBD_HID_Protocol, 1);
+        break;
+
+      case HID_REQ_SET_IDLE:
+        USBD_HID_IdleState = (uint8_t)(req->wValue >> 8);
+        break;
+
+      case HID_REQ_GET_IDLE:
+        USBD_CtlSendData (pdev, (uint8_t *)&USBD_HID_IdleState, 1);
+        break;
+
+      default:
+        USBD_CtlError (pdev, req);
+        return;
       }
-      else if( req->wValue >> 8 == HID_DESCRIPTOR_TYPE)
+      break;
+
+    case USB_REQ_TYPE_STANDARD:
+      switch (req->bRequest)
       {
-        pbuf = (uint8_t  *)get_USB_first_interface_descriptor(0);//USBD_HID_CfgDesc + 0x12;
-        len = MIN(USB_HID_DESC_SIZ , req->wLength);
+      case USB_REQ_GET_DESCRIPTOR:
+        if( req->wValue >> 8 == HID_REPORT_DESC)
+        {
+          len = MIN(HID_MOUSE_REPORT_DESC_SIZE , req->wLength);
+          pbuf = HID_MOUSE_ReportDesc;
+        }
+        else if( req->wValue >> 8 == HID_DESCRIPTOR_TYPE)
+        {
+          pbuf = (uint8_t  *)get_USB_first_interface_descriptor(0);//USBD_HID_CfgDesc + 0x12;
+          len = MIN(USB_HID_DESC_SIZ , req->wLength);
+        }
+
+        USBD_CtlSendData (pdev, pbuf, len);
+
+        break;
+
+      case USB_REQ_GET_INTERFACE :
+        USBD_CtlSendData (pdev, (uint8_t *)&USBD_HID_AltSet, 1);
+        break;
+
+      case USB_REQ_SET_INTERFACE :
+        USBD_HID_AltSet = (uint8_t)(req->wValue);
+        break;
       }
-
-      USBD_CtlSendData (pdev, pbuf, len);
-
-      break;
-
-    case USB_REQ_GET_INTERFACE :
-      USBD_CtlSendData (pdev, (uint8_t *)&USBD_HID_AltSet, 1);
-      break;
-
-    case USB_REQ_SET_INTERFACE :
-      USBD_HID_AltSet = (uint8_t)(req->wValue);
-      break;
-    }
   }
-  return USBD_OK;
 }
 
 /******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/

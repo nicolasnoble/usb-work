@@ -25,17 +25,17 @@
 #include "usb_dcd_int.h"
 #include "usb_bsp.h"
 
-uint8_t USBD_SOF(USB_OTG_CORE_HANDLE *pdev) { return 0; }
-uint8_t USBD_Reset(USB_OTG_CORE_HANDLE *pdev) { return 0; }
-uint8_t USBD_Suspend(USB_OTG_CORE_HANDLE *pdev) { return 0; }
-uint8_t USBD_Resume(USB_OTG_CORE_HANDLE *pdev) { return 0; }
-uint8_t USBD_IsoINIncomplete(USB_OTG_CORE_HANDLE *pdev) { return 0; }
-uint8_t USBD_IsoOUTIncomplete(USB_OTG_CORE_HANDLE *pdev) { return 0; }
-uint8_t USBD_DevConnected(USB_OTG_CORE_HANDLE *pdev) { return 0; }
-uint8_t USBD_DevDisconnected(USB_OTG_CORE_HANDLE *pdev) { return 0; }
+/*void USBD_SOF(USB_OTG_CORE_HANDLE *pdev) { return 0; }
+void USBD_Reset(USB_OTG_CORE_HANDLE *pdev) { return 0; }
+void USBD_Suspend(USB_OTG_CORE_HANDLE *pdev) { return 0; }
+void USBD_Resume(USB_OTG_CORE_HANDLE *pdev) { return 0; }
+void USBD_IsoINIncomplete(USB_OTG_CORE_HANDLE *pdev) { return 0; }*/
+void USBD_IsoOUTIncomplete(USB_OTG_CORE_HANDLE *pdev) {}
+/*void USBD_DevConnected(USB_OTG_CORE_HANDLE *pdev) { return 0; }
+void USBD_DevDisconnected(USB_OTG_CORE_HANDLE *pdev) { return 0; }*/
 
 
-uint8_t USBD_SetupStage(USB_OTG_CORE_HANDLE *pdev)
+void USBD_SetupStage(USB_OTG_CORE_HANDLE *pdev)
 {
   USB_SETUP_REQ req;
 
@@ -59,11 +59,10 @@ uint8_t USBD_SetupStage(USB_OTG_CORE_HANDLE *pdev)
       DCD_EP_Stall(pdev, req.bmRequest & 0x80);
       break;
   }
-  return USBD_OK;
 }
 
 
-uint8_t USBD_DataOutStage(USB_OTG_CORE_HANDLE *pdev, uint8_t epnum)
+void USBD_DataOutStage(USB_OTG_CORE_HANDLE *pdev, uint8_t epnum)
 {
   USB_OTG_EP *ep;
 
@@ -77,31 +76,24 @@ uint8_t USBD_DataOutStage(USB_OTG_CORE_HANDLE *pdev, uint8_t epnum)
         ep->rem_data_len -=  ep->maxpacket;
 
         if (pdev->cfg.dma_enable == 1)
-        {
           /* in slave mode this, is handled by the RxSTSQLvl ISR */
           ep->xfer_buff += ep->maxpacket;
-        }
         USBD_CtlContinueRx (pdev, ep->xfer_buff, MIN(ep->rem_data_len,ep->maxpacket));
       }
       else
       {
         if (pdev->dev.device_status == USB_OTG_CONFIGURED)
-        {
           USBD_Class_EP0_RxReady(pdev);
-        }
         USBD_CtlSendStatus(pdev);
       }
     }
   }
   else if (pdev->dev.device_status == USB_OTG_CONFIGURED)
-  {
     USBD_Class_DataOut(pdev, epnum);
-  }
-  return USBD_OK;
 }
 
 
-uint8_t USBD_DataInStage(USB_OTG_CORE_HANDLE *pdev, uint8_t epnum)
+void USBD_DataInStage(USB_OTG_CORE_HANDLE *pdev, uint8_t epnum)
 {
   USB_OTG_EP *ep;
 
@@ -114,10 +106,8 @@ uint8_t USBD_DataInStage(USB_OTG_CORE_HANDLE *pdev, uint8_t epnum)
       {
         ep->rem_data_len -=  ep->maxpacket;
         if (pdev->cfg.dma_enable == 1)
-        {
           /* in slave mode this, is handled by the TxFifoEmpty ISR */
           ep->xfer_buff += ep->maxpacket;
-        }
         USBD_CtlContinueSendData (pdev, ep->xfer_buff, ep->rem_data_len);
       }
       else
@@ -133,19 +123,14 @@ uint8_t USBD_DataInStage(USB_OTG_CORE_HANDLE *pdev, uint8_t epnum)
         else
         {
           if (pdev->dev.device_status == USB_OTG_CONFIGURED)
-          {
             USBD_Class_EP0_TxSent(pdev);
-          }
           USBD_CtlReceiveStatus(pdev);
         }
       }
     }
   }
   else if (pdev->dev.device_status == USB_OTG_CONFIGURED)
-  {
     DCD_EP_Flush(pdev, HID_IN_EP);
-  }
-  return USBD_OK;
 }
 
 

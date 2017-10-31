@@ -44,19 +44,19 @@
 
 //extern USBD_Class_cb_TypeDef  USBD_HID_cb;
 
-uint8_t USBD_HID_Init(void *pdev, uint8_t cfgidx) { return 0; };
-uint8_t USBD_HID_DeInit(void *pdev, uint8_t cfgidx) { return 0; };
-uint8_t USBD_HID_Setup(void  *pdev, USB_SETUP_REQ *req); //this one is still here
-uint8_t USBD_HID_EP0_TxSent(void *pdev) { return 0; };
-uint8_t USBD_HID_EP0_RxReady(void *pdev) { return 0; };
-uint8_t USBD_HID_DataIn(void *pdev, uint8_t epnum) { return 0; };
-uint8_t USBD_HID_DataOut(void *pdev, uint8_t epnum) { return 0; };
-uint8_t USBD_HID_OF(void *pdev) { return 0; };
-uint8_t USBD_HID_IsoINIncomplete(void *pdev) { return 0; };
-uint8_t USBD_HID_IsoOUTIncomplete(void *pdev) { return 0; };
-uint8_t USBD_HID_GetConfigDescriptor(uint8_t speed, uint16_t *length) { return 0; };
-uint8_t USBD_HID_GetOtherConfigDescriptor(uint8_t speed, uint16_t *length) { return 0; };
-uint8_t USBD_HID_GetUsrStrDescriptor(uint8_t speed, uint8_t index, uint16_t *length) { return 0; };
+void USBD_HID_Init(void *pdev, uint8_t cfgidx) {};
+void USBD_HID_DeInit(void *pdev, uint8_t cfgidx) {};
+void USBD_HID_Setup(void *pdev, USB_SETUP_REQ *req); //this one is still here
+void USBD_HID_EP0_TxSent(void *pdev) {};
+void USBD_HID_EP0_RxReady(void *pdev) {};
+void USBD_HID_DataIn(void *pdev, uint8_t epnum) {};
+void USBD_HID_DataOut(void *pdev, uint8_t epnum) {};
+void USBD_HID_OF(void *pdev) {};
+void USBD_HID_IsoINIncomplete(void *pdev) {};
+void USBD_HID_IsoOUTIncomplete(void *pdev) {};
+void USBD_HID_GetConfigDescriptor(uint8_t speed, uint16_t *length) {};
+void USBD_HID_GetOtherConfigDescriptor(uint8_t speed, uint16_t *length) {};
+void USBD_HID_GetUsrStrDescriptor(uint8_t speed, uint8_t index, uint16_t *length) {};
 
 
 

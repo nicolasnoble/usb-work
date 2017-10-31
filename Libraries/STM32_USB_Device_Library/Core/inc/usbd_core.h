@@ -31,17 +31,17 @@ typedef enum {
   USBD_FAIL,
 } USBD_Status;
 
-uint8_t USBD_DataOutStage(USB_OTG_CORE_HANDLE *pdev, uint8_t epnum);
-uint8_t USBD_DataInStage(USB_OTG_CORE_HANDLE *pdev, uint8_t epnum);
-uint8_t USBD_SetupStage(USB_OTG_CORE_HANDLE *pdev);
-uint8_t USBD_SOF(USB_OTG_CORE_HANDLE *pdev);
-uint8_t USBD_Reset(USB_OTG_CORE_HANDLE *pdev);
-uint8_t USBD_Suspend(USB_OTG_CORE_HANDLE *pdev);
-uint8_t USBD_Resume(USB_OTG_CORE_HANDLE *pdev);
-uint8_t USBD_IsoINIncomplete(USB_OTG_CORE_HANDLE *pdev);
-uint8_t USBD_IsoOUTIncomplete(USB_OTG_CORE_HANDLE *pdev);
-uint8_t USBD_DevConnected(USB_OTG_CORE_HANDLE *pdev);
-uint8_t USBD_DevDisconnected(USB_OTG_CORE_HANDLE *pdev);
+void USBD_DataOutStage(USB_OTG_CORE_HANDLE *pdev, uint8_t epnum);
+void USBD_DataInStage(USB_OTG_CORE_HANDLE *pdev, uint8_t epnum);
+void USBD_SetupStage(USB_OTG_CORE_HANDLE *pdev);
+void USBD_SOF(USB_OTG_CORE_HANDLE *pdev);
+void USBD_Reset(USB_OTG_CORE_HANDLE *pdev);
+void USBD_Suspend(USB_OTG_CORE_HANDLE *pdev);
+void USBD_Resume(USB_OTG_CORE_HANDLE *pdev);
+void USBD_IsoINIncomplete(USB_OTG_CORE_HANDLE *pdev);
+void USBD_IsoOUTIncomplete(USB_OTG_CORE_HANDLE *pdev);
+void USBD_DevConnected(USB_OTG_CORE_HANDLE *pdev);
+void USBD_DevDisconnected(USB_OTG_CORE_HANDLE *pdev);
 
 
 //useful at this stage
@@ -60,19 +60,19 @@ uint8_t USBD_DevDisconnected(USB_OTG_CORE_HANDLE *pdev);
 #define USBD_Class_GetOtherConfigDescriptor USBD_HID_GetOtherConfigDescriptor
 #define USBD_Class_GetUsrStrDescriptor USBD_HID_GetUsrStrDescriptor
 
-uint8_t USBD_Class_Init(void *pdev , uint8_t cfgidx);
-uint8_t USBD_Class_DeInit(void *pdev , uint8_t cfgidx);
-uint8_t USBD_Class_Setup(void  *pdev, USB_SETUP_REQ *req);
-uint8_t USBD_Class_EP0_TxSent(void *pdev );
-uint8_t USBD_Class_EP0_RxReady(void *pdev );
-uint8_t USBD_Class_DataIn(void *pdev , uint8_t epnum);
-uint8_t USBD_Class_DataOut(void *pdev , uint8_t epnum);
-uint8_t USBD_Class_OF(void *pdev);
-uint8_t USBD_Class_IsoINIncomplete(void *pdev);
-uint8_t USBD_Class_IsoOUTIncomplete(void *pdev);
-uint8_t USBD_Class_GetConfigDescriptor( uint8_t speed , uint16_t *length);
-uint8_t USBD_Class_GetOtherConfigDescriptor( uint8_t speed , uint16_t *length);
-uint8_t USBD_Class_GetUsrStrDescriptor( uint8_t speed ,uint8_t index,  uint16_t *length);
+void USBD_Class_Init(void *pdev , uint8_t cfgidx);
+void USBD_Class_DeInit(void *pdev, uint8_t cfgidx);
+void USBD_Class_Setup(void *pdev, USB_SETUP_REQ *req);
+void USBD_Class_EP0_TxSent(void *pdev);
+void USBD_Class_EP0_RxReady(void *pdev);
+void USBD_Class_DataIn(void *pdev, uint8_t epnum);
+void USBD_Class_DataOut(void *pdev, uint8_t epnum);
+void USBD_Class_OF(void *pdev);
+void USBD_Class_IsoINIncomplete(void *pdev);
+void USBD_Class_IsoOUTIncomplete(void *pdev);
+void USBD_Class_GetConfigDescriptor(uint8_t speed, uint16_t *length);
+void USBD_Class_GetOtherConfigDescriptor(uint8_t speed, uint16_t *length);
+void USBD_Class_GetUsrStrDescriptor(uint8_t speed, uint8_t index, uint16_t *length);
 
 /******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
 

@@ -551,7 +551,7 @@ uint8_t USB_OTG_IsHostMode(USB_OTG_CORE_HANDLE *pdev)
   return (USB_OTG_GetMode(pdev) == HOST_MODE);
 }
 
-
+#if 0
 /**
 * @brief  USB_OTG_ReadCoreItr : returns the Core Interrupt register
 * @param  pdev : Selected device
@@ -564,7 +564,7 @@ uint32_t USB_OTG_ReadCoreItr(USB_OTG_CORE_HANDLE *pdev)
   v &= USB_OTG_READ_REG32(&pdev->regs.GREGS->GINTMSK);
   return v;
 }
-
+#endif
 
 /**
 * @brief  USB_OTG_ReadOtgItr : returns the USB_OTG Interrupt register
