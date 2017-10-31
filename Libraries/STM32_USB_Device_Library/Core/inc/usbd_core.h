@@ -19,8 +19,7 @@
   ******************************************************************************
   */
 
-#ifndef __USBD_CORE_H
-#define __USBD_CORE_H
+#pragma once
 
 #include "usb_dcd.h"
 #include "usbd_def.h"
@@ -31,6 +30,19 @@ typedef enum {
   USBD_BUSY,
   USBD_FAIL,
 } USBD_Status;
+
+uint8_t USBD_DataOutStage(USB_OTG_CORE_HANDLE *pdev, uint8_t epnum);
+uint8_t USBD_DataInStage(USB_OTG_CORE_HANDLE *pdev, uint8_t epnum);
+uint8_t USBD_SetupStage(USB_OTG_CORE_HANDLE *pdev);
+uint8_t USBD_SOF(USB_OTG_CORE_HANDLE *pdev);
+uint8_t USBD_Reset(USB_OTG_CORE_HANDLE *pdev);
+uint8_t USBD_Suspend(USB_OTG_CORE_HANDLE *pdev);
+uint8_t USBD_Resume(USB_OTG_CORE_HANDLE *pdev);
+uint8_t USBD_IsoINIncomplete(USB_OTG_CORE_HANDLE *pdev);
+uint8_t USBD_IsoOUTIncomplete(USB_OTG_CORE_HANDLE *pdev);
+uint8_t USBD_DevConnected(USB_OTG_CORE_HANDLE *pdev);
+uint8_t USBD_DevDisconnected(USB_OTG_CORE_HANDLE *pdev);
+
 
 //useful at this stage
 //for debugging a HID device
@@ -61,8 +73,6 @@ uint8_t USBD_Class_IsoOUTIncomplete(void *pdev);
 uint8_t USBD_Class_GetConfigDescriptor( uint8_t speed , uint16_t *length);
 uint8_t USBD_Class_GetOtherConfigDescriptor( uint8_t speed , uint16_t *length);
 uint8_t USBD_Class_GetUsrStrDescriptor( uint8_t speed ,uint8_t index,  uint16_t *length);
-
-#endif
 
 /******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
 

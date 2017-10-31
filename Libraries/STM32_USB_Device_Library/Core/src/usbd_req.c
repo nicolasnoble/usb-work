@@ -33,17 +33,11 @@ __ALIGN_BEGIN uint8_t USBD_StrDesc[USB_MAX_STR_DESC_SIZ] __ALIGN_END ;
 
 
 static void USBD_GetDescriptor(USB_OTG_CORE_HANDLE  *pdev, USB_SETUP_REQ *req);
-
 static void USBD_SetAddress(USB_OTG_CORE_HANDLE  *pdev, USB_SETUP_REQ *req);
-
 static void USBD_SetConfig(USB_OTG_CORE_HANDLE  *pdev, USB_SETUP_REQ *req);
-
 static void USBD_GetConfig(USB_OTG_CORE_HANDLE  *pdev, USB_SETUP_REQ *req);
-
 static void USBD_GetStatus(USB_OTG_CORE_HANDLE  *pdev, USB_SETUP_REQ *req);
-
 static void USBD_SetFeature(USB_OTG_CORE_HANDLE  *pdev, USB_SETUP_REQ *req);
-
 static void USBD_ClrFeature(USB_OTG_CORE_HANDLE  *pdev, USB_SETUP_REQ *req);
 
 
@@ -280,18 +274,18 @@ static void USBD_GetDescriptor(USB_OTG_CORE_HANDLE  *pdev, USB_SETUP_REQ *req)
   switch (req->wValue >> 8)
   {
     case USB_DESC_TYPE_DEVICE: //0x01
-      pbuf = get_USB_device_descriptor();
+      pbuf = (uint8_t *)get_USB_device_descriptor();
       len = pbuf[0];
       break;
 
     case USB_DESC_TYPE_CONFIGURATION: //0x02
-      pbuf = get_USB_configuration_descriptor(1);
+      pbuf = (uint8_t *)get_USB_configuration_descriptor(1);
       len = (((uint16_t) pbuf[3]) << 8) + pbuf[2]; //totallength
       pdev->dev.pConfig_descriptor = pbuf;
       break;
 
     case USB_DESC_TYPE_STRING: //0x03
-        pbuf = get_USB_string_descriptor((uint8_t)(req->wValue));
+        pbuf = (uint8_t *)get_USB_string_descriptor((uint8_t)(req->wValue));
         len = pbuf[0];
       break;
     case USB_DESC_TYPE_DEVICE_QUALIFIER: //0x06 //TODO

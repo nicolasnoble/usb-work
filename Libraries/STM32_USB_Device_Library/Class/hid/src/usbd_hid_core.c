@@ -210,7 +210,7 @@ uint8_t  USBD_HID_Setup (void  *pdev, USB_SETUP_REQ *req)
       }
       else if( req->wValue >> 8 == HID_DESCRIPTOR_TYPE)
       {
-        pbuf = get_USB_first_interface_descriptor(0);//USBD_HID_CfgDesc + 0x12;
+        pbuf = (uint8_t  *)get_USB_first_interface_descriptor(0);//USBD_HID_CfgDesc + 0x12;
         len = MIN(USB_HID_DESC_SIZ , req->wLength);
       }
 

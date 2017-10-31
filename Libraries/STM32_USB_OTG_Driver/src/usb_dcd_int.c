@@ -20,7 +20,10 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
+
 #include "usb_dcd_int.h"
+
+#include "usbd_core.h"
 
 /* static functions */
 static uint32_t DCD_ReadDevInEP(USB_OTG_CORE_HANDLE *pdev, uint8_t epnum);
@@ -70,7 +73,7 @@ uint32_t USBD_OTG_EP1OUT_ISR_Handler(USB_OTG_CORE_HANDLE *pdev) {
         }
         /* Inform upper layer: data ready */
         /* RX COMPLETE */
-        USBD_DCD_INT_fops->DataOutStage(pdev, 1);
+        USBD_DataOutStage(pdev, 1);
     }
 
     /* Endpoint disable  */
@@ -105,7 +108,7 @@ uint32_t USBD_OTG_EP1IN_ISR_Handler(USB_OTG_CORE_HANDLE *pdev) {
         USB_OTG_MODIFY_REG32(&pdev->regs.DREGS->DIEPEMPMSK, fifoemptymsk, 0);
         CLEAR_IN_EP_INTR(1, xfercompl);
         /* TX COMPLETE */
-        USBD_DCD_INT_fops->DataInStage(pdev, 1);
+        USBD_DataInStage(pdev, 1);
     }
     if (diepint.b.ahberr) {
         CLEAR_IN_EP_INTR(1, ahberr);
@@ -343,7 +346,7 @@ static uint32_t DCD_HandleInEP_ISR(USB_OTG_CORE_HANDLE *pdev) {
                 USB_OTG_MODIFY_REG32(&pdev->regs.DREGS->DIEPEMPMSK, fifoemptymsk, 0);
                 CLEAR_IN_EP_INTR(epnum, xfercompl);
                 /* TX COMPLETE */
-                USBD_DCD_INT_fops->DataInStage(pdev, epnum);
+                USBD_DataInStage(pdev, epnum);
 
                 if (pdev->cfg.dma_enable == 1) {
                     if ((epnum == 0) && (pdev->dev.device_state == USB_OTG_EP0_STATUS_IN)) {
@@ -415,7 +418,7 @@ static uint32_t DCD_HandleOutEP_ISR(USB_OTG_CORE_HANDLE *pdev) {
                 }
                 /* Inform upper layer: data ready */
                 /* RX COMPLETE */
-                USBD_DCD_INT_fops->DataOutStage(pdev, epnum);
+                USBD_DataOutStage(pdev, epnum);
 
                 if (pdev->cfg.dma_enable == 1) {
                     if ((epnum == 0) && (pdev->dev.device_state == USB_OTG_EP0_STATUS_OUT)) {
@@ -437,7 +440,7 @@ static uint32_t DCD_HandleOutEP_ISR(USB_OTG_CORE_HANDLE *pdev) {
             if (doepint.b.setup) {
                 /* inform the upper layer that a setup packet is available */
                 /* SETUP COMPLETE */
-                USBD_DCD_INT_fops->SetupStage(pdev);
+                USBD_SetupStage(pdev);
                 CLEAR_OUT_EP_INTR(epnum, setup);
             }
         }
@@ -710,7 +713,7 @@ static uint32_t DCD_IsoOUTIncomplete_ISR(USB_OTG_CORE_HANDLE *pdev) {
 
     gintsts.d32 = 0;
 
-    USBD_DCD_INT_fops->IsoOUTIncomplete(pdev);
+    USBD_IsoOUTIncomplete(pdev);
 
     /* Clear interrupt */
     gintsts.b.incomplisoout = 1;

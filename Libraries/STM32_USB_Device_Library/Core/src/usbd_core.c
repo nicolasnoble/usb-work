@@ -25,31 +25,17 @@
 #include "usb_dcd_int.h"
 #include "usb_bsp.h"
 
-static uint8_t USBD_SetupStage(USB_OTG_CORE_HANDLE *pdev);
-static uint8_t USBD_DataOutStage(USB_OTG_CORE_HANDLE *pdev, uint8_t epnum);
-static uint8_t USBD_DataInStage(USB_OTG_CORE_HANDLE *pdev, uint8_t epnum);
-
-USBD_DCD_INT_cb_TypeDef USBD_DCD_INT_cb =
-{
-  USBD_DataOutStage,
-  USBD_DataInStage,
-  USBD_SetupStage,
-  NULL,//USBD_SOF,
-  NULL,//USBD_Reset,
-  NULL,//USBD_Suspend,
-  NULL,//USBD_Resume,
-  NULL,//USBD_IsoINIncomplete,
-  NULL,//USBD_IsoOUTIncomplete,
-#ifdef VBUS_SENSING_ENABLED
-NULL,//USBD_DevConnected,
-NULL,//USBD_DevDisconnected,
-#endif
-};
-
-USBD_DCD_INT_cb_TypeDef  *USBD_DCD_INT_fops = &USBD_DCD_INT_cb;
+uint8_t USBD_SOF(USB_OTG_CORE_HANDLE *pdev) { return 0; }
+uint8_t USBD_Reset(USB_OTG_CORE_HANDLE *pdev) { return 0; }
+uint8_t USBD_Suspend(USB_OTG_CORE_HANDLE *pdev) { return 0; }
+uint8_t USBD_Resume(USB_OTG_CORE_HANDLE *pdev) { return 0; }
+uint8_t USBD_IsoINIncomplete(USB_OTG_CORE_HANDLE *pdev) { return 0; }
+uint8_t USBD_IsoOUTIncomplete(USB_OTG_CORE_HANDLE *pdev) { return 0; }
+uint8_t USBD_DevConnected(USB_OTG_CORE_HANDLE *pdev) { return 0; }
+uint8_t USBD_DevDisconnected(USB_OTG_CORE_HANDLE *pdev) { return 0; }
 
 
-static uint8_t USBD_SetupStage(USB_OTG_CORE_HANDLE *pdev)
+uint8_t USBD_SetupStage(USB_OTG_CORE_HANDLE *pdev)
 {
   USB_SETUP_REQ req;
 
@@ -77,7 +63,7 @@ static uint8_t USBD_SetupStage(USB_OTG_CORE_HANDLE *pdev)
 }
 
 
-static uint8_t USBD_DataOutStage(USB_OTG_CORE_HANDLE *pdev, uint8_t epnum)
+uint8_t USBD_DataOutStage(USB_OTG_CORE_HANDLE *pdev, uint8_t epnum)
 {
   USB_OTG_EP *ep;
 
@@ -99,8 +85,7 @@ static uint8_t USBD_DataOutStage(USB_OTG_CORE_HANDLE *pdev, uint8_t epnum)
       }
       else
       {
-        if (//(USBD_Class_EP0_RxReady != NULL)&&
-           (pdev->dev.device_status == USB_OTG_CONFIGURED))
+        if (pdev->dev.device_status == USB_OTG_CONFIGURED)
         {
           USBD_Class_EP0_RxReady(pdev);
         }
@@ -108,8 +93,7 @@ static uint8_t USBD_DataOutStage(USB_OTG_CORE_HANDLE *pdev, uint8_t epnum)
       }
     }
   }
-  else if (//(USBD_Class_DataOut != NULL)&&
-          (pdev->dev.device_status == USB_OTG_CONFIGURED))
+  else if (pdev->dev.device_status == USB_OTG_CONFIGURED)
   {
     USBD_Class_DataOut(pdev, epnum);
   }
@@ -117,7 +101,7 @@ static uint8_t USBD_DataOutStage(USB_OTG_CORE_HANDLE *pdev, uint8_t epnum)
 }
 
 
-static uint8_t USBD_DataInStage(USB_OTG_CORE_HANDLE *pdev, uint8_t epnum)
+uint8_t USBD_DataInStage(USB_OTG_CORE_HANDLE *pdev, uint8_t epnum)
 {
   USB_OTG_EP *ep;
 
@@ -148,8 +132,7 @@ static uint8_t USBD_DataInStage(USB_OTG_CORE_HANDLE *pdev, uint8_t epnum)
         }
         else
         {
-          if (//(USBD_Class_EP0_TxSent != NULL)&&
-             (pdev->dev.device_status == USB_OTG_CONFIGURED))
+          if (pdev->dev.device_status == USB_OTG_CONFIGURED)
           {
             USBD_Class_EP0_TxSent(pdev);
           }
