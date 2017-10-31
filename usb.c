@@ -13,7 +13,7 @@
 
 __ALIGN_BEGIN USB_OTG_CORE_HANDLE  USB_OTG_dev __ALIGN_END;
 extern uint32_t USBD_OTG_ISR_Handler (USB_OTG_CORE_HANDLE *pdev);
-extern USBD_Class_cb_TypeDef  USBD_HID_cb;
+//extern USBD_Class_cb_TypeDef  USBD_HID_cb;
 
 void USB_OTG_BSP_uDelay (const uint32_t usec)
 {
@@ -67,7 +67,7 @@ void usb_fs_device_init()
   RCC_AHB2PeriphClockCmd(RCC_AHB2Periph_OTG_FS, ENABLE) ;
 
   //set callbacks
-  USB_OTG_dev.dev.class_cb = &USBD_HID_cb;
+  USB_OTG_dev.dev.class_cb = NULL;//&USBD_HID_cb;
   USB_OTG_dev.dev.usr_cb = NULL;
   USB_OTG_dev.dev.usr_device = NULL;
 

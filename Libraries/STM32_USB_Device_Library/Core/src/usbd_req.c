@@ -116,7 +116,7 @@ USBD_Status  USBD_StdItfReq (USB_OTG_CORE_HANDLE  *pdev, USB_SETUP_REQ  *req)
       if (LOBYTE(req->wIndex) <= USBD_ITF_MAX_NUM)
       {
         //CLASS Setup
-        pdev->dev.class_cb->Setup (pdev, req);
+        USBD_Class_Setup(pdev, req);
 
         if((req->wLength == 0)&& (ret == USBD_OK))
         {
@@ -173,7 +173,7 @@ USBD_Status  USBD_StdEPReq (USB_OTG_CORE_HANDLE  *pdev, USB_SETUP_REQ  *req)
             }
           }
           //CLASS setup
-          pdev->dev.class_cb->Setup (pdev, req);
+          USBD_Class_Setup(pdev, req);
           USBD_CtlSendStatus(pdev);
           break;
 
@@ -200,7 +200,7 @@ USBD_Status  USBD_StdEPReq (USB_OTG_CORE_HANDLE  *pdev, USB_SETUP_REQ  *req)
             {
               DCD_EP_ClrStall(pdev , ep_addr);
               //CLASS setup
-              pdev->dev.class_cb->Setup (pdev, req);
+              USBD_Class_Setup(pdev, req);
             }
             USBD_CtlSendStatus(pdev);
           }
@@ -512,7 +512,7 @@ static void USBD_SetFeature(USB_OTG_CORE_HANDLE  *pdev, USB_SETUP_REQ *req)
   {
     pdev->dev.DevRemoteWakeup = 1;
     //CLASS setup
-    pdev->dev.class_cb->Setup (pdev, req);
+    USBD_Class_Setup(pdev, req);
     USBD_CtlSendStatus(pdev);
   }
 
@@ -568,7 +568,7 @@ static void USBD_ClrFeature(USB_OTG_CORE_HANDLE  *pdev, USB_SETUP_REQ *req)
       {
         pdev->dev.DevRemoteWakeup = 0;
         //CLASS setup
-        pdev->dev.class_cb->Setup (pdev, req);
+        USBD_Class_Setup(pdev, req);
         USBD_CtlSendStatus(pdev);
       }
       break;

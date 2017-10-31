@@ -45,9 +45,7 @@
 #include "usbd_desc.h"
 #include "usbd_req.h"
 
-
-static uint8_t  USBD_HID_Setup (void  *pdev,
-                                USB_SETUP_REQ *req);
+#if 0
 
 USBD_Class_cb_TypeDef  USBD_HID_cb =
 {
@@ -64,7 +62,6 @@ USBD_Class_cb_TypeDef  USBD_HID_cb =
   NULL,//USBD_HID_GetCfgDesc,
 };
 
-#if 0
 __ALIGN_BEGIN static uint8_t USBD_HID_CfgDesc[USB_HID_CONFIG_DESC_SIZ] __ALIGN_END =
 {
   0x09, /* bLength: Configuration Descriptor size */
@@ -170,8 +167,7 @@ const uint8_t * get_USB_interface_descriptor(int configuration, int interface);
   * @param  req: usb requests
   * @retval status
   */
-static uint8_t  USBD_HID_Setup (void  *pdev,
-                                USB_SETUP_REQ *req)
+uint8_t  USBD_HID_Setup (void  *pdev, USB_SETUP_REQ *req)
 {
   uint16_t len = 0;
   uint8_t  *pbuf = NULL;

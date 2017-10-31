@@ -300,10 +300,8 @@ static uint8_t  usbd_cdc_Init (void  *pdev, uint8_t cfgidx)
 
   /* Open EP IN */
   DCD_EP_Open(pdev, CDC_IN_EP, CDC_DATA_IN_PACKET_SIZE, USB_OTG_EP_BULK);
-
   /* Open EP OUT */
   DCD_EP_Open(pdev, CDC_OUT_EP, CDC_DATA_OUT_PACKET_SIZE, USB_OTG_EP_BULK);
-
   /* Open Command IN EP */
   DCD_EP_Open(pdev, CDC_CMD_EP, CDC_CMD_PACKET_SZE, USB_OTG_EP_INT);
 
@@ -324,10 +322,8 @@ static uint8_t  usbd_cdc_DeInit (void  *pdev, uint8_t cfgidx)
 {
   /* Open EP IN */
   DCD_EP_Close(pdev, CDC_IN_EP);
-
   /* Open EP OUT */
   DCD_EP_Close(pdev, CDC_OUT_EP);
-
   /* Open Command IN EP */
   DCD_EP_Close(pdev, CDC_CMD_EP);
 
