@@ -46,8 +46,8 @@ void USBD_DevDisconnected(USB_OTG_CORE_HANDLE *pdev);
 
 //useful at this stage
 //for debugging a HID device
-#define USBD_Class_Init USBD_HID_Init
-#define USBD_Class_DeInit USBD_HID_DeInit
+#define USBD_Class_Init(X,Y) usb_hid_device_init()//USBD_HID_Init
+#define USBD_Class_DeInit(X,Y) usb_hid_device_deinit()//USBD_HID_DeInit
 #define USBD_Class_Setup USBD_HID_Setup
 #define USBD_Class_EP0_TxSent USBD_HID_EP0_TxSent
 #define USBD_Class_EP0_RxReady USBD_HID_EP0_RxReady

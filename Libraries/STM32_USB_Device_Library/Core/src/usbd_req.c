@@ -40,6 +40,12 @@ static void USBD_GetStatus(USB_OTG_CORE_HANDLE  *pdev, USB_SETUP_REQ *req);
 static void USBD_SetFeature(USB_OTG_CORE_HANDLE  *pdev, USB_SETUP_REQ *req);
 static void USBD_ClrFeature(USB_OTG_CORE_HANDLE  *pdev, USB_SETUP_REQ *req);
 
+/*
+// temporary for debugging
+void usb_hid_device_init();
+void usb_hid_device_deinit();
+void usb_hid_device_setup();
+*/
 
 /**
 * @brief  USBD_StdDevReq
@@ -376,10 +382,7 @@ static void USBD_SetConfig(USB_OTG_CORE_HANDLE  *pdev, USB_SETUP_REQ *req)
         pdev->dev.device_config = cfgidx;
         pdev->dev.device_status = USB_OTG_CONFIGURED;
         // begin CLASS Init
-        /* Open EP IN */
-        DCD_EP_Open(pdev, HID_IN_EP, HID_IN_PACKET, USB_OTG_EP_INT);
-        /* Open EP OUT */
-        DCD_EP_Open(pdev, HID_OUT_EP, HID_OUT_PACKET, USB_OTG_EP_INT);
+        USBD_Class_Init(pdev, cfgidx);
         // end CLASS Init
         USBD_CtlSendStatus(pdev);
       }
@@ -391,9 +394,7 @@ static void USBD_SetConfig(USB_OTG_CORE_HANDLE  *pdev, USB_SETUP_REQ *req)
         pdev->dev.device_status = USB_OTG_ADDRESSED;
         pdev->dev.device_config = cfgidx;
         // begin CLASS Deinit
-        /* Close HID EPs */
-        DCD_EP_Close (pdev , HID_IN_EP);
-        DCD_EP_Close (pdev , HID_OUT_EP);
+        USBD_Class_DeInit(pdev, cfgidx);
         // end CLASS Deinit
 
       }
@@ -401,18 +402,13 @@ static void USBD_SetConfig(USB_OTG_CORE_HANDLE  *pdev, USB_SETUP_REQ *req)
       {
         /* Clear old configuration */
         // begin CLASS Deinit
-        /* Close HID EPs */
-        DCD_EP_Close (pdev , HID_IN_EP);
-        DCD_EP_Close (pdev , HID_OUT_EP);
+        USBD_Class_DeInit(pdev, cfgidx);
         // end CLASS Deinit
 
         /* set new configuration */
         pdev->dev.device_config = cfgidx;
         // begin CLASS Init
-        /* Open EP IN */
-        DCD_EP_Open(pdev, HID_IN_EP, HID_IN_PACKET, USB_OTG_EP_INT);
-        /* Open EP OUT */
-        DCD_EP_Open(pdev, HID_OUT_EP, HID_OUT_PACKET, USB_OTG_EP_INT);
+        USBD_Class_Init(pdev, cfgidx);
         // end CLASS Init
       }
       break;

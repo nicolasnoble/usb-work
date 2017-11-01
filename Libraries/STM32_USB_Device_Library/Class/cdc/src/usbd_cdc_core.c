@@ -107,8 +107,18 @@ static uint32_t cdcLen = 0;
 /* CDC interface class callbacks structure */
 USBD_Class_cb_TypeDef  USBD_CDC_cb =
 {
-  usbd_cdc_Init, usbd_cdc_DeInit, usbd_cdc_Setup, NULL,                 /* EP0_TxSent, */
-  usbd_cdc_EP0_RxReady, usbd_cdc_DataIn, usbd_cdc_DataOut, usbd_cdc_SOF, NULL, NULL, USBD_cdc_GetCfgDesc, #ifdef USE_USB_OTG_HS
+  usbd_cdc_Init,
+  usbd_cdc_DeInit,
+  usbd_cdc_Setup,
+  NULL,                 /* EP0_TxSent, */
+  usbd_cdc_EP0_RxReady,
+  usbd_cdc_DataIn,
+  usbd_cdc_DataOut,
+  usbd_cdc_SOF,
+  NULL,
+  NULL,
+  USBD_cdc_GetCfgDesc,
+#ifdef USE_USB_OTG_HS
   USBD_cdc_GetOtherCfgDesc, /* use same cobfig as per FS */
 #endif /* USE_USB_OTG_HS  */
 };
